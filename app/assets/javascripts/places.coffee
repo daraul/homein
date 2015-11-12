@@ -220,6 +220,53 @@ $(document).ready ->
         for inputBox in $("#facets-container .facet span input[type=number].maximum")
             inputBox.value = values[inputBox.dataset["facet"]]["max"]
         
+        $("#facets-container #slider-container input").change () ->
+            window.option = this 
+            facet = this.dataset['facet']
+            
+            values = [this.parentElement.parentElement.children[0].firstElementChild.value, this.parentElement.parentElement.children[2].firstElementChild.value]
+            
+            encodeURL(facet, values)
+            
+            $("#facets-container #slider-container #" + facet + " .slider").slider( "option", "values", values );
+            
+            delay (->
+                search(getQuery(), getFacetFilters(), getNumericFilters(), (content) ->
+                    markers.map((marker, index) ->
+                        marker.setMap(null)
+                        markerClusterer.removeMarker(marker)
+                    )
+                    
+                    markers.length = 0
+                    
+                    bounds = new google.maps.LatLngBounds()
+                    
+                    results = content.hits 
+                    
+                    for result in results 
+                        position = new google.maps.LatLng(result.latitude, result.longitude)
+                        
+                        marker = placeMarker(position, map, false, getContent(result))
+                        
+                        marker.title = result.description 
+                        
+                        marker.addListener('click', () ->
+                            infoWindow.setContent(this.content)
+                            infoWindow.open(map, this) 
+                        )
+                            
+                        markers.push marker 
+                        
+                        bounds.extend(position)
+                    
+                    map.fitBounds(bounds)
+                    map.panToBounds(bounds)
+                    
+                    markerClusterer = new MarkerClusterer(map, markers)
+                )
+            ), 500
+            return 
+        
         $("#facets-container #place_for").change () ->
             facet = "for"
             values = [ this.value ]
