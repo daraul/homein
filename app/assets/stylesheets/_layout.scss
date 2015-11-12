@@ -1,0 +1,47 @@
+@mixin flex-direction() {
+    @media screen {
+        @media (orientation: landscape) {
+            flex-direction: row;
+        }
+        
+        @media (orientation: portrait) {
+            flex-direction: column;
+        }
+    }
+}
+
+@mixin flex-direction-inverse() {
+    @media screen {
+        @media (orientation: landscape) {
+            flex-direction: column;
+        }
+        
+        @media (orientation: portrait) {
+            flex-direction: row;
+        }
+    }
+}
+
+@mixin flex-direction-inverse-reverse() {
+    @media screen {
+        @media (orientation: landscape) {
+            flex-direction: column-reverse;
+        }
+        
+        @media (orientation: portrait) {
+            flex-direction: row;
+        }
+    }
+}
+
+@mixin slider-margins() {
+    @media screen {
+        @media (orientation: landscape) {
+            margin: 20px 0 ;
+        }
+        
+        @media (orientation: portrait) {
+            margin: 0 20px;
+        }
+    }
+}

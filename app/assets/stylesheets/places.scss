@@ -2,55 +2,100 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-@import 'icons', 'colours', 'transitions';
+@import 'icons', 'colours', 'transitions', 'layout';
 
 a {
     text-decoration: none;
 }
 
-html, body, #map-canvas {
+html, body {
 	height: 100%;
 	margin: 0;
 	padding: 0;
+}
 
-    #panel {
-    	position: absolute;
-    	top: 5px;
-    	left: 50%;
-    	margin-left: -180px;
-    	z-index: 5;
-    	background-color: #fff;
-    	padding: 5px;
-    	border: 1px solid #999;
+body {
+    display: flex;
+    @include flex-direction();
+    
+    #map-canvas {
+        display: flex;
+        flex-grow: 1;
+        
+        #place_pictures {
+            display: flex; 
+            justify-content: center; 
+            
+            .place_picture {
+                width: 150px;
+            }
+        }
     }
     
     .container#main_container {
-        position: absolute;
-        width: 500px;
-        bottom: 15px;
-        left: 15px;
-        z-index: 2;
-        background-color: rgba(255, 255, 255, 0.8);
+        display: flex;
+        flex-direction: column;
         padding: 15px;
-        border-radius: 2px;
-        box-shadow: 5px 5px 10px rgba(109, 109, 109, 0.25);
+        box-sizing: border-box;
         
         #facets-container {
-            .facet {
+            display: flex;
+            flex-grow: 1;
+            flex-wrap: wrap;
+            justify-content: center;
+            @include flex-direction-inverse();
+            
+            #slider-container {
                 display: flex;
-                margin: 10px 0;
+                @include flex-direction();
+                width: 100%;
+                flex-grow: 1;
                 
-                .slider {
-                    flex-grow: 2;
-                    margin: 0 20px;
+                .facet {
+                    display: flex;
+                    @include flex-direction-inverse();
+                    align-items: center;
+                    margin: 10px 0;
+                    
+                    .inputContainer {
+                        display: flex;
+                        align-items: center;
+                        flex-grow: 1;
+                        @include flex-direction-inverse-reverse();
+                        
+                        input[type=number] {
+                            height: 1em;
+                            border: none;
+                        }
+                        
+                        .slider {
+                            flex-grow: 2;
+                            @include slider-margins();
+                        }
+                    }
                 }
             }
         }
         
         #options-container {
-            display: flex;
             margin: 10px 0;
+            display: flex;
             justify-content: center;
+            @include flex-direction-inverse();
+            
+            #search {
+                flex-grow: 1;
+                    
+                #searchbar {
+                    height: 100%;
+                    border: none;
+                }
+                
+                
+                #searchbar:focus {
+                    outline: none;
+                }
+            }
             
             i, ul, span {
                 height: 30px;
@@ -58,15 +103,6 @@ html, body, #map-canvas {
                 
                 i {
                     height: auto;
-                }
-                
-                #searchbar {
-                    height: 100%;
-                    border: none;
-                }
-                
-                #searchbar:focus {
-                    outline: none;
                 }
             }
             

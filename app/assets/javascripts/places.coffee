@@ -66,18 +66,6 @@ $(document).ready ->
             clearTimeout timer
             timer = setTimeout(callback, ms)
             return
-
-    
-    $("#searchbar").keyup ->
-        value = [ this.value ]
-        
-        encodeURL("query", value)
-        
-        delay (->
-            decodeURL()
-            return 
-        ), 500
-        return 
     
     getFacetFilters = () ->
         facetFilters = []
@@ -122,8 +110,10 @@ $(document).ready ->
         content += "</p>"
         
         if result.pictures 
+            content += "<span id=\"place_pictures\">"
             for picture in result.pictures 
-                content += "<a href=\"#{picture}\" target=\"_blank\"><img src=\"#{picture}\" /></a>"
+                content += "<a href=\"#{picture}\" class=\"place_picture_link\" target=\"_blank\"><img class=\"place_picture\" src=\"#{picture}\" /></a>"
+            content += "</span>"
         
         if typeof currentuser != 'undefined' && currentuser == result.user_id
             content += 
@@ -182,9 +172,14 @@ $(document).ready ->
                 location.hash += "#{facet}=#{valueString}"
             else 
                 location.hash += "&#{facet}=#{valueString}"
-        
     
-    renderFacets = (query, facetFilters, numericFilters, map, markers, markerClusterer) ->
+    getFacetSliderOrientation = () ->
+        if window.innerWidth > window.innerHeight 
+            return "vertical"
+        else
+            return "horizontal"
+    
+    renderFacets = (query, facetFilters, numericFilters, map, markers, markerClusterer, orientation) ->
         values = 
             "price": 
                 "min": facetsStats.price.min
@@ -195,14 +190,19 @@ $(document).ready ->
             "rooms":
                 "min": facetsStats.rooms.min
                 "max": facetsStats.rooms.max
-                
-        for inputBox in $("#facets-container .facet input[type=number].minimum")
-            inputBox.value = values[inputBox.dataset["facet"]]["min"]
-            
-        for inputBox in $("#facets-container .facet input[type=number].maximum")
-            inputBox.value = values[inputBox.dataset["facet"]]["max"]
         
         $("#searchbar").val(getQuery())
+        
+        place_for_index = 0 
+        
+        while place_for_index < facetFilters.length 
+            place_for = facetFilters[place_for_index].split(":")[1]
+            
+            for option in $("#facets-container #place_for option")
+                if option.value == place_for
+                    option.selected = true 
+                
+            place_for_index++
         
         for numericFilter in numericFilters
             if numericFilter.split(/:|=/)[1].split(" to ")[1] != undefined 
@@ -214,17 +214,111 @@ $(document).ready ->
                     "min": facetsStats[numericFilter.split(/:|=/)[0]].min
                     "max": parseInt(numericFilter.split(/:|=/)[1].split(" to ")[0])
         
+        for inputBox in $("#facets-container .facet span input[type=number].minimum")
+            inputBox.value = values[inputBox.dataset["facet"]]["min"]
+            
+        for inputBox in $("#facets-container .facet span input[type=number].maximum")
+            inputBox.value = values[inputBox.dataset["facet"]]["max"]
+        
+        $("#facets-container #slider-container input").change () ->
+            window.option = this 
+            facet = this.dataset['facet']
+            
+            values = [this.parentElement.parentElement.children[0].firstElementChild.value, this.parentElement.parentElement.children[2].firstElementChild.value]
+            
+            encodeURL(facet, values)
+            
+            $("#facets-container #slider-container #" + facet + " .slider").slider( "option", "values", values );
+            
+            delay (->
+                search(getQuery(), getFacetFilters(), getNumericFilters(), (content) ->
+                    markers.map((marker, index) ->
+                        marker.setMap(null)
+                        markerClusterer.removeMarker(marker)
+                    )
+                    
+                    markers.length = 0
+                    
+                    bounds = new google.maps.LatLngBounds()
+                    
+                    results = content.hits 
+                    
+                    for result in results 
+                        position = new google.maps.LatLng(result.latitude, result.longitude)
+                        
+                        marker = placeMarker(position, map, false, getContent(result))
+                        
+                        marker.title = result.description 
+                        
+                        marker.addListener('click', () ->
+                            infoWindow.setContent(this.content)
+                            infoWindow.open(map, this) 
+                        )
+                            
+                        markers.push marker 
+                        
+                        bounds.extend(position)
+                    
+                    map.fitBounds(bounds)
+                    map.panToBounds(bounds)
+                    
+                    markerClusterer = new MarkerClusterer(map, markers)
+                )
+            ), 500
+            return 
+        
+        $("#facets-container #place_for").change () ->
+            facet = "for"
+            values = [ this.value ]
+            
+            encodeURL(facet, values)
+            
+            search(getQuery(), getFacetFilters(), getNumericFilters(), (content) ->
+                    markers.map((marker, index) ->
+                        marker.setMap(null)
+                        markerClusterer.removeMarker(marker)
+                    )
+                    
+                    markers.length = 0
+                    
+                    bounds = new google.maps.LatLngBounds()
+                    
+                    results = content.hits 
+                    
+                    for result in results 
+                        position = new google.maps.LatLng(result.latitude, result.longitude)
+                        
+                        marker = placeMarker(position, map, false, getContent(result))
+                        
+                        marker.title = result.description 
+                        
+                        marker.addListener('click', () ->
+                            infoWindow.setContent(this.content)
+                            infoWindow.open(map, this) 
+                        )
+                            
+                        markers.push marker 
+                        
+                        bounds.extend(position)
+                    
+                    map.fitBounds(bounds)
+                    map.panToBounds(bounds)
+                    
+                    markerClusterer = new MarkerClusterer(map, markers)
+                )
+        
         $("#facets-container .slider").slider
             range: true,
             create: () ->
+                $(this).slider( "option", "orientation", orientation )
                 $(this).slider( "option", "min", $(this).data("min") )
                 $(this).slider( "option", "max", $(this).data("max") )
                 $(this).slider( "option", "values", [ values[$(this).data("facet")]['min'], values[$(this).data("facet")].max ] )
             stop: (event, ui) ->
-                ui.handle.parentElement.previousElementSibling.value = ui.values[0]
-                ui.handle.parentElement.nextElementSibling.value = ui.values[1]
-                
                 facet = ui.handle.parentElement.dataset.facet 
+                
+                $("##{facet} .minimum").val(ui.values[0])
+                $("##{facet} .maximum").val(ui.values[1])
                 
                 values = [
                     ui.values[0]
@@ -267,10 +361,10 @@ $(document).ready ->
                     markerClusterer = new MarkerClusterer(map, markers)
                 )
             slide: (event, ui) ->
-                ui.handle.parentElement.previousElementSibling.value = ui.values[0]
-                ui.handle.parentElement.nextElementSibling.value = ui.values[1]
-                
                 facet = ui.handle.parentElement.dataset.facet 
+                
+                $("##{facet} .minimum").val(ui.values[0])
+                $("##{facet} .maximum").val(ui.values[1])
                 
                 values = [
                     ui.values[0]
@@ -312,7 +406,52 @@ $(document).ready ->
                     
                     markerClusterer = new MarkerClusterer(map, markers)
                     
-                    renderFacets(getQuery(), getFacetFilters(), getNumericFilters(), map, markers, markerClusterer)
+                    renderFacets(getQuery(), getFacetFilters(), getNumericFilters(), map, markers, markerClusterer, getFacetSliderOrientation())
+                    
+                    window.addEventListener 'resize', ->
+                        $("#facets-container .slider").slider("option", "orientation", getFacetSliderOrientation())
+                        
+                    $("#searchbar").keyup ->
+                        value = [ this.value ]
+                        
+                        encodeURL("query", value)
+                        
+                        delay (->
+                            search(getQuery(), getFacetFilters(), getNumericFilters(), (content) ->
+                                markers.map((marker, index) ->
+                                    marker.setMap(null)
+                                    markerClusterer.removeMarker(marker)
+                                )
+                                
+                                markers.length = 0
+                                
+                                bounds = new google.maps.LatLngBounds()
+                                
+                                results = content.hits 
+                                
+                                for result in results 
+                                    position = new google.maps.LatLng(result.latitude, result.longitude)
+                                    
+                                    marker = placeMarker(position, map, false, getContent(result))
+                                    
+                                    marker.title = result.description 
+                                    
+                                    marker.addListener('click', () ->
+                                        infoWindow.setContent(this.content)
+                                        infoWindow.open(map, this) 
+                                    )
+                                        
+                                    markers.push marker 
+                                    
+                                    bounds.extend(position)
+                                
+                                map.fitBounds(bounds)
+                                map.panToBounds(bounds)
+                                
+                                markerClusterer = new MarkerClusterer(map, markers)
+                            )
+                        ), 500
+                        return 
                 )
             )
         else if /^\/places\/\d+\/?$/.test(location.pathname)
