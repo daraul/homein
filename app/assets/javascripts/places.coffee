@@ -193,6 +193,17 @@ $(document).ready ->
         
         $("#searchbar").val(getQuery())
         
+        place_for_index = 0 
+        
+        while place_for_index < facetFilters.length 
+            place_for = facetFilters[place_for_index].split(":")[1]
+            
+            for option in $("#facets-container #place_for option")
+                if option.value == place_for
+                    option.selected = true 
+                
+            place_for_index++
+        
         for numericFilter in numericFilters
             if numericFilter.split(/:|=/)[1].split(" to ")[1] != undefined 
                 values[numericFilter.split(/:|=/)[0]] = 
@@ -208,6 +219,46 @@ $(document).ready ->
             
         for inputBox in $("#facets-container .facet span input[type=number].maximum")
             inputBox.value = values[inputBox.dataset["facet"]]["max"]
+        
+        $("#facets-container #place_for").change () ->
+            facet = "for"
+            values = [ this.value ]
+            
+            encodeURL(facet, values)
+            
+            search(getQuery(), getFacetFilters(), getNumericFilters(), (content) ->
+                    markers.map((marker, index) ->
+                        marker.setMap(null)
+                        markerClusterer.removeMarker(marker)
+                    )
+                    
+                    markers.length = 0
+                    
+                    bounds = new google.maps.LatLngBounds()
+                    
+                    results = content.hits 
+                    
+                    for result in results 
+                        position = new google.maps.LatLng(result.latitude, result.longitude)
+                        
+                        marker = placeMarker(position, map, false, getContent(result))
+                        
+                        marker.title = result.description 
+                        
+                        marker.addListener('click', () ->
+                            infoWindow.setContent(this.content)
+                            infoWindow.open(map, this) 
+                        )
+                            
+                        markers.push marker 
+                        
+                        bounds.extend(position)
+                    
+                    map.fitBounds(bounds)
+                    map.panToBounds(bounds)
+                    
+                    markerClusterer = new MarkerClusterer(map, markers)
+                )
         
         $("#facets-container .slider").slider
             range: true,
