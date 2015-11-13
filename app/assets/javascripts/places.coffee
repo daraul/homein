@@ -119,7 +119,9 @@ $(document).ready ->
             content += 
                 "<a href=\"/places/#{result.id}/edit\" class=\"place-management-link\"><i class=\"fa fa-pencil\" title=\"Edit place\"></i></a>
                 <a data-confirm=\"Are you sure you want to delete this place?\" rel=\"nofollow\" data-method=\"delete\" href=\"/places/#{result.id}\" class=\"place-management-link\"><i class=\"fa fa-trash-o\" title=\"Delete place\"></i></a>"
-                
+        
+        content += 
+            "Contact: <a href=\"mailto:#{result.contact}\" title=\"Serious enquiries, please!\">#{result.contact}</a>"
         
         return content 
     
