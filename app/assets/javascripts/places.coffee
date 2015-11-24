@@ -7,7 +7,7 @@
 String.prototype.capitalizeFirstLetter = () -> 
     this.charAt(0).toUpperCase() + this.slice(1)
 
-$(document).ready ->
+$(document).on 'page:change', () ->
     ApplicationID = '3J0AVN6KSY'
     
     SearchOnlyApiKey = 'fde549a36ac77931bd57966851982602'
@@ -21,17 +21,7 @@ $(document).ready ->
     facetsStats = window.facetsStats
     window.facetsStats = undefined 
     
-    initializeMap = (center, zoom, bounds, callback) ->
-        map = new google.maps.Map(document.getElementById('map-canvas'), 
-            zoom: zoom
-            center: center 
-        )
-        
-        if bounds 
-            map.fitBounds(bounds)
-            map.panToBounds(bounds)
-            
-        callback(map)
+    initMap()
     
     search = (query, facetFilters, numericFilters, callback) ->
         index.search(
@@ -391,85 +381,88 @@ $(document).ready ->
                 
                 center = bounds.getCenter()
                 
-                initializeMap(center, 1, bounds, (map) ->  #Set an arbitrary zoom level to initialize the map, then zoom, pan to bounds 
-                    for result in results 
-                        position = new google.maps.LatLng(result.latitude, result.longitude)
-                        
-                        marker = placeMarker(position, map, false, getContent(result))
-                        
-                        marker.title = result.description 
-                        
-                        marker.addListener('click', () ->
-                            infoWindow.setContent(this.content)
-                            infoWindow.open(map, this) 
-                        )
-                            
-                        markers.push marker 
+                for result in results 
+                    position = new google.maps.LatLng(result.latitude, result.longitude)
                     
-                    markerClusterer = new MarkerClusterer(map, markers)
+                    marker = placeMarker(position, map, false, getContent(result))
                     
-                    renderFacets(getQuery(), getFacetFilters(), getNumericFilters(), map, markers, markerClusterer, getFacetSliderOrientation())
+                    marker.title = result.description 
                     
-                    window.addEventListener 'resize', ->
-                        $("#facets-container .slider").slider("option", "orientation", getFacetSliderOrientation())
+                    marker.addListener('click', () ->
+                        infoWindow.setContent(this.content)
+                        infoWindow.open(map, this) 
+                    )
                         
-                    $("#searchbar").keyup ->
-                        value = [ this.value ]
-                        
-                        encodeURL("query", value)
-                        
-                        delay (->
-                            search(getQuery(), getFacetFilters(), getNumericFilters(), (content) ->
-                                markers.map((marker, index) ->
-                                    marker.setMap(null)
-                                    markerClusterer.removeMarker(marker)
-                                )
-                                
-                                markers.length = 0
-                                
-                                bounds = new google.maps.LatLngBounds()
-                                
-                                results = content.hits 
-                                
-                                for result in results 
-                                    position = new google.maps.LatLng(result.latitude, result.longitude)
-                                    
-                                    marker = placeMarker(position, map, false, getContent(result))
-                                    
-                                    marker.title = result.description 
-                                    
-                                    marker.addListener('click', () ->
-                                        infoWindow.setContent(this.content)
-                                        infoWindow.open(map, this) 
-                                    )
-                                        
-                                    markers.push marker 
-                                    
-                                    bounds.extend(position)
-                                
-                                map.fitBounds(bounds)
-                                map.panToBounds(bounds)
-                                
-                                markerClusterer = new MarkerClusterer(map, markers)
+                    markers.push marker 
+                
+                map.fitBounds(bounds)
+                map.panToBounds(bounds)
+                
+                markerClusterer = new MarkerClusterer(map, markers)
+                
+                renderFacets(getQuery(), getFacetFilters(), getNumericFilters(), map, markers, markerClusterer, getFacetSliderOrientation())
+                
+                window.addEventListener 'resize', ->
+                    $("#facets-container .slider").slider("option", "orientation", getFacetSliderOrientation())
+                    
+                $("#searchbar").keyup ->
+                    value = [ this.value ]
+                    
+                    encodeURL("query", value)
+                    
+                    delay (->
+                        search(getQuery(), getFacetFilters(), getNumericFilters(), (content) ->
+                            markers.map((marker, index) ->
+                                marker.setMap(null)
+                                markerClusterer.removeMarker(marker)
                             )
-                        ), 500
-                        return 
-                )
+                            
+                            markers.length = 0
+                            
+                            bounds = new google.maps.LatLngBounds()
+                            
+                            results = content.hits 
+                            
+                            for result in results 
+                                position = new google.maps.LatLng(result.latitude, result.longitude)
+                                
+                                marker = placeMarker(position, map, false, getContent(result))
+                                
+                                marker.title = result.description 
+                                
+                                marker.addListener('click', () ->
+                                    infoWindow.setContent(this.content)
+                                    infoWindow.open(map, this) 
+                                )
+                                    
+                                markers.push marker 
+                                
+                                bounds.extend(position)
+                            
+                            map.fitBounds(bounds)
+                            map.panToBounds(bounds)
+                            
+                            markerClusterer = new MarkerClusterer(map, markers)
+                        )
+                    ), 500
+                    return 
             )
         else if /^\/places\/\d+\/?$/.test(location.pathname)
             place = window.place
             
             center = new google.maps.LatLng(place.latitude, place.longitude)
             
-            initializeMap(center, 14, null, (map) ->
-                marker = placeMarker(center, map, false, getContent(place))
-                
-                infoWindow.setContent(marker.content)
+            map.setZoom(14)
+            
+            map.panTo(center)
+            
+            marker = placeMarker(center, map, false, getContent(place))
+            
+            infoWindow.setContent(marker.content)
+            infoWindow.open(map, marker)
+            
+            marker.addListener('click', () ->
                 infoWindow.open(map, marker)
-                
-                marker.addListener('click', () ->
-                    infoWindow.open(map, marker)
-                )
             )
         else if /^\/places\/\d+\/edit\/?$/.test(location.pathname)
             form = window.form 
@@ -480,11 +473,27 @@ $(document).ready ->
             
             center = new google.maps.LatLng(place.latitude, place.longitude)
             
-            initializeMap(center, 14, null, (map) ->
-                marker = placeMarker(center, map, true)
-                    
-                infoWindow.setContent(form)
+            marker = placeMarker(center, map, true)
+                
+            infoWindow.setContent(form)
+            infoWindow.open(map, marker)
+            
+            marker.addListener('click', () ->
                 infoWindow.open(map, marker)
+                setLatLng(marker.position)
+                reverseGeocode(marker.position)
+            ) 
+            
+            marker.addListener('dragend', () ->
+                setLatLng(marker.position)
+                reverseGeocode(marker.position)
+            ) 
+        else if /^\/places\/new\/?$/.test(location.pathname)
+            form = window.form 
+            window.form = undefined 
+            
+            getPosition((position) ->
+                marker = placeMarker(position, map, true)
                 
                 marker.addListener('click', () ->
                     infoWindow.open(map, marker)
@@ -496,29 +505,9 @@ $(document).ready ->
                     setLatLng(marker.position)
                     reverseGeocode(marker.position)
                 ) 
-            )
-        else if /^\/places\/new\/?$/.test(location.pathname)
-            form = window.form 
-            window.form = undefined 
             
-            getPosition((position) ->
-                initializeMap(position, 14, undefined, (map) ->
-                    marker = placeMarker(position, map, true)
-                    
-                    marker.addListener('click', () ->
-                        infoWindow.open(map, marker)
-                        setLatLng(marker.position)
-                        reverseGeocode(marker.position)
-                    ) 
-                    
-                    marker.addListener('dragend', () ->
-                        setLatLng(marker.position)
-                        reverseGeocode(marker.position)
-                    ) 
-                
-                    infoWindow.setContent(form)
-                    infoWindow.open(map, marker)
-                )
+                infoWindow.setContent(form)
+                infoWindow.open(map, marker)
             )
         else if /^\/you\/?$/.test(location.pathname)
             places = window.places 
@@ -535,22 +524,23 @@ $(document).ready ->
                 
             center = bounds.getCenter()
             
-            initializeMap(center, 1, bounds, (map) ->  #Set an arbitrary zoom level to initialize the map, then zoom, pan to bounds 
-                for place in places
-                    position = new google.maps.LatLng(place.latitude, place.longitude)
-                    
-                    marker = placeMarker(position, map, false, getContent(place))
-                    
-                    marker.title = place.description 
-                    
-                    marker.addListener('click', () ->
-                        infoWindow.setContent(this.content)
-                        infoWindow.open(map, this) 
-                    )
+            for place in places
+                position = new google.maps.LatLng(place.latitude, place.longitude)
                 
-                    markers.push marker 
+                marker = placeMarker(position, map, false, getContent(place))
                 
-                markerClusterer = new MarkerClusterer(map, markers)
-            )
+                marker.title = place.description 
+                
+                marker.addListener('click', () ->
+                    infoWindow.setContent(this.content)
+                    infoWindow.open(map, this) 
+                )
+            
+                markers.push marker 
+            
+            markerClusterer = new MarkerClusterer(map, markers)
+            
+            map.fitBounds(bounds)
+            map.panToBounds(bounds)
             
     decodeURL()
