@@ -80,6 +80,13 @@
             <% end %>
             </div> <!-- Close the #options-container div -->
         </div>
-    
+      
+        <script type="text/javascript" charset="utf-8">
+            $("#alert, #notice").bind("DOMSubtreeModified", function() {
+                setTimeout(function() {
+                    $("#alert, #notice").html("");
+                }, 2500);
+            });
+        </script>
     </body>
 </html>

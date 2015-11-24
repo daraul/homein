@@ -23,6 +23,10 @@ $(document).on 'page:change', () ->
     
     initMap()
     
+    setTimeout(() ->
+        $("#alert, #notice").html("");
+    , 2500)
+    
     search = (query, facetFilters, numericFilters, callback) ->
         index.search(
             query, 
@@ -34,6 +38,9 @@ $(document).on 'page:change', () ->
                 if err 
                     alert err 
                     return
+                
+                if content.hits.length == 0 
+                    $("#alert").html("No hits found!") 
                 
                 callback(content)
         )
