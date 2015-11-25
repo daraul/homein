@@ -148,6 +148,9 @@ $(document).on 'page:change', () ->
         geocoder.geocode( { 'latLng' : position }, (results, status) ->
             $("form .field #place_address").removeAttr("disabled")
             $("form .field #place_address").val(results[0].formatted_address)
+            
+            if callback
+                callback(results)
         )
         
     getPosition = (callback) ->
@@ -156,8 +159,7 @@ $(document).on 'page:change', () ->
                 position = new google.maps.LatLng(result.coords.latitude, result.coords.longitude)
                 callback(position)
             , () ->
-                position = new google.maps.LatLng(37.0625,-95.677068)
-                callback(position) 
+                callback(false) 
             )
     encodeURL = (facet, values) ->
         valueString = values.join('-')
@@ -401,7 +403,7 @@ $(document).on 'page:change', () ->
                     )
                         
                     markers.push marker 
-                
+                    
                 map.fitBounds(bounds)
                 map.panToBounds(bounds)
                 
@@ -478,9 +480,9 @@ $(document).on 'page:change', () ->
             place = window.place 
             window.place = undefined 
             
-            center = new google.maps.LatLng(place.latitude, place.longitude)
+            position = new google.maps.LatLng(place.latitude, place.longitude)
             
-            marker = placeMarker(center, map, true)
+            marker = placeMarker(position, map, true)
                 
             infoWindow.setContent(form)
             infoWindow.open(map, marker)
@@ -495,11 +497,22 @@ $(document).on 'page:change', () ->
                 setLatLng(marker.position)
                 reverseGeocode(marker.position)
             ) 
+            
+            map.panTo(position)
         else if /^\/places\/new\/?$/.test(location.pathname)
             form = window.form 
             window.form = undefined 
             
-            getPosition((position) ->
+            getPosition((userPosition) ->
+                if userPosition
+                    position = userPosition
+                else 
+                    position = new google.maps.LatLng(37.0625,-95.677068)
+                    reverseGeocode(position, (results) ->
+                        console.log results 
+                        $("#notice").html("Location not provided. Defaulting to #{results[0].address_components[1].long_name}")
+                    )
+                
                 marker = placeMarker(position, map, true)
                 
                 marker.addListener('click', () ->
@@ -515,6 +528,8 @@ $(document).on 'page:change', () ->
             
                 infoWindow.setContent(form)
                 infoWindow.open(map, marker)
+                
+                map.panTo(position)
             )
         else if /^\/you\/?$/.test(location.pathname)
             places = window.places 
