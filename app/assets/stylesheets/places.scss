@@ -15,7 +15,7 @@ html {
         display: flex;
         margin: 0;
         height: inherit;
-        @media screen and (orientation: portrait) {
+        @media screen and (orientation: portrait) and (min-resolution: 190dpi) {
             font-size: 2em;
         }
         @include flex-direction();
@@ -25,8 +25,7 @@ html {
             flex-grow: 1;
             
             .gm-style-iw {
-                font-size: 1.5em;
-                @media screen and (orientation: portrait) {
+                @media screen and (orientation: portrait) and (min-resolution: 190dpi) {
                     font-size: 2em;
                 }
             }
