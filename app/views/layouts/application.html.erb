@@ -20,11 +20,13 @@
         
         <script type="text/javascript" src="https://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js"></script>
             
-        <script defer src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['google_maps_api_key'] %>
+        
         <% if Rails.application.routes.recognize_path('/places/') %>
-          &callback=initMap
+            <script defer src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['google_maps_api_key'] %>&callback=initMap"></script>
+         <% else %>
+            <script defer src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['google_maps_api_key'] %>"></script>
         <% end %>
-        "></script>
+        
         
         <!-- Fontawesome -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
