@@ -35,6 +35,7 @@ $(document).on 'page:change', () ->
             document.cookie = "visited:" + today 
     
     search = (query, facetFilters, numericFilters, callback) ->
+        console.log query
         index.search(
             query, 
             {
@@ -55,7 +56,7 @@ $(document).on 'page:change', () ->
     getQuery = () ->
         query = ""
         
-        queryRegex = /(?:&|#)query=(\w+)(?=&)?/g 
+        queryRegex = /(?:&|#)query=((?:\w+)(?:%20\w*)?)(?=&)?/g 
         
         queryMatch = queryRegex.exec(location.hash)
         
@@ -170,8 +171,9 @@ $(document).on 'page:change', () ->
             )
     encodeURL = (facet, values) ->
         valueString = values.join('-')
+        valueString = encodeURIComponent(valueString)
         
-        regex = RegExp("(&|#)(#{facet})=(?:\\w(?:-\\d)?)*(&|$)", "g")
+        regex = RegExp("(&|#)(#{facet})(?:=(?:(?:\\w+(?:(?:%20)|-)?)+)?)?(&|$)", "g")
         
         if regex.test(location.hash)
             location.hash = location.hash.replace(regex, "$1$2=#{valueString}$3")
@@ -461,7 +463,7 @@ $(document).on 'page:change', () ->
                             markerClusterer = new MarkerClusterer(map, markers)
                         )
                     ), 500
-                    return 
+                    return
             )
         else if /^\/places\/\d+\/?$/.test(location.pathname)
             place = window.place
@@ -516,7 +518,6 @@ $(document).on 'page:change', () ->
                 else 
                     position = new google.maps.LatLng(37.0625,-95.677068)
                     reverseGeocode(position, (results) ->
-                        console.log results 
                         $("#notice").html("Location not provided. Defaulting to #{results[0].address_components[1].long_name}")
                     )
                 
