@@ -27,6 +27,13 @@ $(document).on 'page:change', () ->
         $("#alert, #notice").html("");
     , 2500)
     
+    checkVisited = () ->
+        if document.cookie.indexOf("visited") >= 0 
+            return 
+        else 
+            today = new Date()
+            document.cookie = "visited:" + today 
+    
     search = (query, facetFilters, numericFilters, callback) ->
         index.search(
             query, 
@@ -566,3 +573,4 @@ $(document).on 'page:change', () ->
             map.panToBounds(bounds)
             
     decodeURL()
+    checkVisited()
