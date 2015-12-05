@@ -38,6 +38,9 @@ gem 'devise'
 gem "paperclip", "~> 4.3"
 gem 'paperclip-imgur'
 
+# Have to change names! :(
+gem 'rename'
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
