@@ -4,194 +4,164 @@
 
 @import 'icons', 'colours', 'transitions', 'layout';
 
-a {
-    text-decoration: none;
-}
-
 html {
 	height: 100%;
 
     body {
         display: flex;
-        margin: 0;
         height: inherit;
+        margin: 0;
         @media screen and (orientation: portrait) and (min-resolution: 190dpi) {
             font-size: 2em;
         }
-        @include flex-direction();
+        flex-direction: column;
         
-        #map-canvas {
+        #main.container {
             display: flex;
-            flex-grow: 1;
-            
-            .gm-style-iw {
-                @media screen and (orientation: portrait) and (min-resolution: 190dpi) {
-                    font-size: 2em;
-                }
-            }
-            
-            #place_pictures {
-                display: flex; 
-                justify-content: center; 
-                
-                .place_picture {
-                    width: 150px;
-                }
-            }
-        }
-        
-        .container#main_container {
-            display: flex;
-            flex-direction: column;
+            height: inherit;
             padding: 15px;
             box-sizing: border-box;
+            @media screen and (orientation: portrait) and (min-resolution: 190dpi) {
+                flex-direction: column;
+            }
             
-            #facets-container {
+            #content.container {
                 display: flex;
-                flex-grow: 1;
-                flex-wrap: wrap;
-                justify-content: center;
-                @include flex-direction-inverse();
+                padding: 0 15px 0 0;
+                flex-direction: column;
+                flex-grow: 2;
+                overflow: scroll;
                 
-                #slider-container {
-                    display: flex;
-                    @include flex-direction();
-                    width: 100%;
-                    flex-grow: 1;
+                .listing {
+                    margin-bottom: $default_bottom_margin;
                     
-                    .facet {
+                    h1 {
+                        margin: 0 0 $default_bottom_margin 0;
+                    }
+                    
+                    p {
+                        margin: 0 0 $default_bottom_margin 0;
+                    }
+                    
+                    p:last-child {
+                        margin: 0;
+                    }
+                }
+                
+                .place-management-link {
+                    color: #333;
+                }
+                
+                .place-management-link:hover {
+                    color: $highlight-color;
+                }
+                
+                #latitude_field, #longitude_field, #contact_field, #available_field {
+                    display: none;
+                }
+                
+                #rooms_field {
+                    float: left;
+                    margin-right: 10px;
+                }
+            
+                .field { 
+                    #place_description {
+                        width: 500px;
+                        height: 75px;
+                    }
+                    
+                    #place_address {
+                        width: 500px;
+                    }
+                }
+        
+                ul.authorization_links {
+                    position: absolute;
+                    bottom: 0;
+                    width: 100%;
+                    text-align: center;
+                    font-weight: bold;
+                    padding: 0;
+                    text-shadow: 0px 0px 25px #fff, 0px 0px 25px #fff, 0px 0px 25px #fff;
+                    
+                    li {
+                        list-style-type: none;
+                    }
+                }
+            }
+            
+            #options.container {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+                margin: 0 0 0 15px;
+                
+                .fa {
+                    font-size: 1.5em;
+                    padding: 0 5px;
+                }
+                
+                #facets.container {
+                    display: flex;
+                    flex-grow: 1;
+                    flex-wrap: wrap;
+                    justify-content: center;
+                    margin-bottom: $default_bottom_margin;
+                    @include flex-direction-inverse();
+                    
+                    #sliders.container {
                         display: flex;
-                        @include flex-direction-inverse();
-                        align-items: center;
-                        margin: 10px 0;
+                        @include flex-direction();
+                        width: 100%;
+                        flex-grow: 1;
+                        margin-bottom: $default_bottom_margin;
                         
-                        .inputContainer {
+                        .facet {
                             display: flex;
+                            @include flex-direction-inverse();
                             align-items: center;
-                            flex-grow: 1;
-                            @include flex-direction-inverse-reverse();
+                            margin: 10px 0;
                             
-                            input[type=number] {
-                                height: 1em;
-                                border: none;
-                            }
-                            
-                            .slider {
-                                flex-grow: 2;
-                                @include slider-margins();
+                            #input.container {
+                                display: flex;
+                                align-items: center;
+                                flex-grow: 1;
+                                @include flex-direction-inverse-reverse();
+                                
+                                input[type=number] {
+                                    height: 1em;
+                                    border: none;
+                                    @media screen and (orientation: portrait) and (min-resolution: 190dpi) {
+                                        font-size: 1em;
+                                    }
+                                }
+                                
+                                .slider {
+                                    flex-grow: 2;
+                                    @include slider-margins();
+                                }
                             }
                         }
                     }
-                }
-            }
-            
-            #options-container {
-                margin: 10px 0;
-                display: flex;
-                justify-content: center;
-                @include flex-direction-inverse();
-                
-                #search {
-                    flex-grow: 1;
-                        
-                    #searchbar {
-                        height: 100%;
-                        border: none;
+                    
+                    #for {
+                        margin-bottom: $default_bottom_margin;
                     }
                     
-                    
-                    #searchbar:focus {
-                        outline: none;
+                    #search {
+                        .fa-search {
+                            font-size: 1em;
+                        }
                     }
-                }
-                
-                i, ul, span {
-                    height: 30px;
-                    margin: 0 10px;
-                    
-                    i {
-                        height: auto;
-                    }
-                }
-                
-                #toggle-filter-button {
-                    color: #333;
-                    padding: 0;
-                }
-                
-                #toggle-filter-button:hover {
-                    color: $highlight-color;
-                    cursor: pointer;
                 }
                 
                 #navigation_links {
-                    list-style-type: none;
+                    margin: 0;
+                    display: flex;
                     padding: 0;
-                    text-align: center;
-                    
-                    a {
-                        color: #333;
-                        
-                        i {
-                            margin: 0;
-                        }
-                    }
-                    
-                    a:hover {
-                        color: $highlight-color;
-                    }
+                    justify-content: center;
                 }
-            }
-        }
-        
-        .fa {
-            font-size: 1.5em;
-            padding: 0 5px;
-        }
-        
-        .fa-search {
-            font-size: 1em;
-        }
-        
-        .place-management-link {
-            color: #333;
-        }
-        
-        .place-management-link:hover {
-            color: $highlight-color;
-        }
-    
-        #latitude_field, #longitude_field, #contact_field, #available_field {
-            display: none;
-        }
-        
-        #rooms_field {
-            float: left;
-            margin-right: 10px;
-        }
-    
-        .field { 
-            #place_description {
-                width: 500px;
-                height: 75px;
-            }
-            
-            #place_address {
-                width: 500px;
-            }
-        }
-        
-        ul.authorization_links {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            text-align: center;
-            font-weight: bold;
-            padding: 0;
-            text-shadow: 0px 0px 25px #fff, 0px 0px 25px #fff, 0px 0px 25px #fff;
-            
-            li {
-                list-style-type: none;
             }
         }
     }

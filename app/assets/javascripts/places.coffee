@@ -16,12 +16,20 @@ $(document).on 'page:change', () ->
     
     index = client.initIndex('homein_places_' + window.environment)
     
-    infoWindow = new google.maps.InfoWindow
-    
     facetsStats = window.facetsStats
     window.facetsStats = undefined 
     
-    initMap()
+    $("#searchbar").keyup ->
+        value = [ this.value ]
+        
+        encodeURL("query", value)
+        
+        delay (->
+            search(getQuery(), getFacetFilters(), getNumericFilters(), (content) ->
+                renderList(content)
+            )
+        ), 500
+        return
     
     setTimeout(() ->
         $("#alert, #notice").html("");
@@ -35,7 +43,6 @@ $(document).on 'page:change', () ->
             document.cookie = "visited:" + today 
     
     search = (query, facetFilters, numericFilters, callback) ->
-        console.log query
         index.search(
             query, 
             {
@@ -45,12 +52,13 @@ $(document).on 'page:change', () ->
             (err, content) ->
                 if err 
                     alert err 
-                    return
+                    return err 
                 
                 if content.hits.length == 0 
-                    $("#alert").html("No hits found!") 
+                    $("#alert").html("No hits found!")
                 
-                callback(content)
+                if callback
+                    callback(content.hits)
         )
     
     getQuery = () ->
@@ -189,7 +197,7 @@ $(document).on 'page:change', () ->
         else
             return "horizontal"
     
-    renderFacets = (query, facetFilters, numericFilters, map, markers, markerClusterer, orientation) ->
+    renderFacets = (query, facetFilters, numericFilters, orientation) ->
         values = 
             "price": 
                 "min": facetsStats.price.min
@@ -208,7 +216,7 @@ $(document).on 'page:change', () ->
         while place_for_index < facetFilters.length 
             place_for = facetFilters[place_for_index].split(":")[1]
             
-            for option in $("#facets-container #place_for option")
+            for option in $("#facets.container #place_for option")
                 if option.value == place_for
                     option.selected = true 
                 
@@ -224,13 +232,13 @@ $(document).on 'page:change', () ->
                     "min": facetsStats[numericFilter.split(/:|=/)[0]].min
                     "max": parseInt(numericFilter.split(/:|=/)[1].split(" to ")[0])
         
-        for inputBox in $("#facets-container .facet span input[type=number].minimum")
+        for inputBox in $("#facets.container .facet span input[type=number].minimum")
             inputBox.value = values[inputBox.dataset["facet"]]["min"]
             
-        for inputBox in $("#facets-container .facet span input[type=number].maximum")
+        for inputBox in $("#facets.container .facet span input[type=number].maximum")
             inputBox.value = values[inputBox.dataset["facet"]]["max"]
         
-        $("#facets-container #slider-container input").change () ->
+        $("#facets.container #sliders.container input").change () ->
             window.option = this 
             facet = this.dataset['facet']
             
@@ -238,86 +246,26 @@ $(document).on 'page:change', () ->
             
             encodeURL(facet, values)
             
-            $("#facets-container #slider-container #" + facet + " .slider").slider( "option", "values", values );
+            $("#facets.container #sliders.container #" + facet + " .slider").slider( "option", "values", values );
             
             delay (->
                 search(getQuery(), getFacetFilters(), getNumericFilters(), (content) ->
-                    markers.map((marker, index) ->
-                        marker.setMap(null)
-                        markerClusterer.removeMarker(marker)
-                    )
-                    
-                    markers.length = 0
-                    
-                    bounds = new google.maps.LatLngBounds()
-                    
-                    results = content.hits 
-                    
-                    for result in results 
-                        position = new google.maps.LatLng(result.latitude, result.longitude)
-                        
-                        marker = placeMarker(position, map, false, getContent(result))
-                        
-                        marker.title = result.description 
-                        
-                        marker.addListener('click', () ->
-                            infoWindow.setContent(this.content)
-                            infoWindow.open(map, this) 
-                        )
-                            
-                        markers.push marker 
-                        
-                        bounds.extend(position)
-                    
-                    map.fitBounds(bounds)
-                    map.panToBounds(bounds)
-                    
-                    markerClusterer = new MarkerClusterer(map, markers)
+                    renderList(content)
                 )
             ), 500
             return 
         
-        $("#facets-container #place_for").change () ->
+        $("#facets.container #place_for").change () ->
             facet = "for"
             values = [ this.value ]
             
             encodeURL(facet, values)
             
             search(getQuery(), getFacetFilters(), getNumericFilters(), (content) ->
-                    markers.map((marker, index) ->
-                        marker.setMap(null)
-                        markerClusterer.removeMarker(marker)
-                    )
-                    
-                    markers.length = 0
-                    
-                    bounds = new google.maps.LatLngBounds()
-                    
-                    results = content.hits 
-                    
-                    for result in results 
-                        position = new google.maps.LatLng(result.latitude, result.longitude)
-                        
-                        marker = placeMarker(position, map, false, getContent(result))
-                        
-                        marker.title = result.description 
-                        
-                        marker.addListener('click', () ->
-                            infoWindow.setContent(this.content)
-                            infoWindow.open(map, this) 
-                        )
-                            
-                        markers.push marker 
-                        
-                        bounds.extend(position)
-                    
-                    map.fitBounds(bounds)
-                    map.panToBounds(bounds)
-                    
-                    markerClusterer = new MarkerClusterer(map, markers)
-                )
+                renderList(content)
+            )
         
-        $("#facets-container .slider").slider
+        $("#facets.container .slider").slider
             range: true,
             create: () ->
                 $(this).slider( "option", "orientation", orientation )
@@ -338,37 +286,7 @@ $(document).on 'page:change', () ->
                 encodeURL(facet, values)
                 
                 search(getQuery(), getFacetFilters(), getNumericFilters(), (content) ->
-                    markers.map((marker, index) ->
-                        marker.setMap(null)
-                        markerClusterer.removeMarker(marker)
-                    )
-                    
-                    markers.length = 0
-                    
-                    bounds = new google.maps.LatLngBounds()
-                    
-                    results = content.hits 
-                    
-                    for result in results 
-                        position = new google.maps.LatLng(result.latitude, result.longitude)
-                        
-                        marker = placeMarker(position, map, false, getContent(result))
-                        
-                        marker.title = result.description 
-                        
-                        marker.addListener('click', () ->
-                            infoWindow.setContent(this.content)
-                            infoWindow.open(map, this) 
-                        )
-                            
-                        markers.push marker 
-                        
-                        bounds.extend(position)
-                    
-                    map.fitBounds(bounds)
-                    map.panToBounds(bounds)
-                    
-                    markerClusterer = new MarkerClusterer(map, markers)
+                    renderList(content)
                 )
             slide: (event, ui) ->
                 facet = ui.handle.parentElement.dataset.facet 
@@ -383,195 +301,42 @@ $(document).on 'page:change', () ->
                 
                 encodeURL(facet, values)
     
+    renderList = (list) ->
+        content = ""
+        
+        for listing in list 
+            content += 
+                "<div class=\"listing\">" + 
+                "<h1><a href=\"/places/#{listing.objectID}\">#{listing.address}</a></h1>" + 
+                "<p>#{listing.description}</p>" + 
+                "<p>Price: $#{parseFloat(listing.price).toLocaleString()}, For: #{listing.for}</p>" +
+                "<p>Rooms: #{listing.rooms}, Bathrooms: #{listing.bathrooms}</p>" +
+                "</div>"
+                
+        $("#content.container").html(content)
+    
     decodeURL = () ->
         if /^\/(places)?\/?$/.test(location.pathname)
             search(getQuery(), getFacetFilters(), getNumericFilters(), (content) ->
-                bounds = new google.maps.LatLngBounds()
-                
-                markers = []
-                
-                results = content.hits 
-                
-                for result in results 
-                    position = new google.maps.LatLng(result.latitude, result.longitude)
-                    
-                    bounds.extend(position)
-                
-                center = bounds.getCenter()
-                
-                for result in results 
-                    position = new google.maps.LatLng(result.latitude, result.longitude)
-                    
-                    marker = placeMarker(position, map, false, getContent(result))
-                    
-                    marker.title = result.description 
-                    
-                    marker.addListener('click', () ->
-                        infoWindow.setContent(this.content)
-                        infoWindow.open(map, this) 
-                    )
-                        
-                    markers.push marker 
-                    
-                map.fitBounds(bounds)
-                map.panToBounds(bounds)
-                
-                markerClusterer = new MarkerClusterer(map, markers)
-                
-                renderFacets(getQuery(), getFacetFilters(), getNumericFilters(), map, markers, markerClusterer, getFacetSliderOrientation())
-                
-                window.addEventListener 'resize', ->
-                    $("#facets-container .slider").slider("option", "orientation", getFacetSliderOrientation())
-                    
-                $("#searchbar").keyup ->
-                    value = [ this.value ]
-                    
-                    encodeURL("query", value)
-                    
-                    delay (->
-                        search(getQuery(), getFacetFilters(), getNumericFilters(), (content) ->
-                            markers.map((marker, index) ->
-                                marker.setMap(null)
-                                markerClusterer.removeMarker(marker)
-                            )
-                            
-                            markers.length = 0
-                            
-                            bounds = new google.maps.LatLngBounds()
-                            
-                            results = content.hits 
-                            
-                            for result in results 
-                                position = new google.maps.LatLng(result.latitude, result.longitude)
-                                
-                                marker = placeMarker(position, map, false, getContent(result))
-                                
-                                marker.title = result.description 
-                                
-                                marker.addListener('click', () ->
-                                    infoWindow.setContent(this.content)
-                                    infoWindow.open(map, this) 
-                                )
-                                    
-                                markers.push marker 
-                                
-                                bounds.extend(position)
-                            
-                            map.fitBounds(bounds)
-                            map.panToBounds(bounds)
-                            
-                            markerClusterer = new MarkerClusterer(map, markers)
-                        )
-                    ), 500
-                    return
+                renderList(content)
             )
+            
+            window.addEventListener 'resize', ->
+                $("#facets.container .slider").slider("option", "orientation", getFacetSliderOrientation())
+            
+            renderFacets(getQuery(), getFacetFilters(), getNumericFilters(), getFacetSliderOrientation())
+                
         else if /^\/places\/\d+\/?$/.test(location.pathname)
             place = window.place
-            
-            center = new google.maps.LatLng(place.latitude, place.longitude)
-            
-            map.setZoom(14)
-            
-            map.panTo(center)
-            
-            marker = placeMarker(center, map, false, getContent(place))
-            
-            infoWindow.setContent(marker.content)
-            infoWindow.open(map, marker)
-            
-            marker.addListener('click', () ->
-                infoWindow.open(map, marker)
-            )
         else if /^\/places\/\d+\/edit\/?$/.test(location.pathname)
             form = window.form 
             window.form = undefined 
-            
-            place = window.place 
-            window.place = undefined 
-            
-            position = new google.maps.LatLng(place.latitude, place.longitude)
-            
-            marker = placeMarker(position, map, true)
-                
-            infoWindow.setContent(form)
-            infoWindow.open(map, marker)
-            
-            marker.addListener('click', () ->
-                infoWindow.open(map, marker)
-                setLatLng(marker.position)
-                reverseGeocode(marker.position)
-            ) 
-            
-            marker.addListener('dragend', () ->
-                setLatLng(marker.position)
-                reverseGeocode(marker.position)
-            ) 
-            
-            map.panTo(position)
         else if /^\/places\/new\/?$/.test(location.pathname)
             form = window.form 
             window.form = undefined 
-            
-            getPosition((userPosition) ->
-                if userPosition
-                    position = userPosition
-                else 
-                    position = new google.maps.LatLng(37.0625,-95.677068)
-                    reverseGeocode(position, (results) ->
-                        $("#notice").html("Location not provided. Defaulting to #{results[0].address_components[1].long_name}")
-                    )
-                
-                marker = placeMarker(position, map, true)
-                
-                marker.addListener('click', () ->
-                    infoWindow.open(map, marker)
-                    setLatLng(marker.position)
-                    reverseGeocode(marker.position)
-                ) 
-                
-                marker.addListener('dragend', () ->
-                    setLatLng(marker.position)
-                    reverseGeocode(marker.position)
-                ) 
-            
-                infoWindow.setContent(form)
-                infoWindow.open(map, marker)
-                
-                map.panTo(position)
-            )
         else if /^\/you\/?$/.test(location.pathname)
             places = window.places 
             window.places = undefined
-            
-            bounds = new google.maps.LatLngBounds()
-            
-            markers = []
-            
-            for place in places 
-                position = new google.maps.LatLng(place.latitude, place.longitude)
-                
-                bounds.extend(position)
-                
-            center = bounds.getCenter()
-            
-            for place in places
-                position = new google.maps.LatLng(place.latitude, place.longitude)
-                
-                marker = placeMarker(position, map, false, getContent(place))
-                
-                marker.title = place.description 
-                
-                marker.addListener('click', () ->
-                    infoWindow.setContent(this.content)
-                    infoWindow.open(map, this) 
-                )
-            
-                markers.push marker 
-            
-            markerClusterer = new MarkerClusterer(map, markers)
-            
-            map.fitBounds(bounds)
-            map.panToBounds(bounds)
-            
+    
     decodeURL()
     checkVisited()

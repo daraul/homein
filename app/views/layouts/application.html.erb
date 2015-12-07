@@ -6,27 +6,7 @@
         <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
         <%= csrf_meta_tags %>
         
-        <script type="text/javascript">
-            var map;
-            
-            function initMap() {
-              map = new google.maps.Map(document.getElementById('map-canvas'), {
-                center: {lat: -34.397, lng: 150.644},
-                zoom: 8
-              });
-            }
-        </script>
-        
-        
-        <script type="text/javascript" src="https://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js"></script>
-            
-        
-        <% if Rails.application.routes.recognize_path('/places/') %>
-            <script defer src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['google_maps_api_key'] %>&callback=initMap"></script>
-         <% else %>
-            <script defer src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['google_maps_api_key'] %>"></script>
-        <% end %>
-        
+        <script defer src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['google_maps_api_key'] %>"></script>
         
         <!-- Fontawesome -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
@@ -43,44 +23,40 @@
             <% end %>
         <% end %> 
         
-        <div id="map-canvas">
-        </div>
-        
-        <div class="container" id="main_container">
-            <%= yield %>
+        <div class="container" id="main">
+            <div id="content" class="container"></div>
             
-            <% if !current_page?(root_path) %>
-              <div id="options-container">
-            <% end %>
-            <% if user_signed_in? %>
-                <ul id="navigation_links" class="two-column">
-            		<%= link_to root_path, :title => "Home" do %>
-            		    <i class="fa fa-home"></i>
-            		<% end %>
-                	<%= link_to current_user_places_path, :id => "logged_in", :title => "View your places" do %>
-                        <i class="fa fa-user"></i>
-                	<% end %>
-            	    <%= link_to destroy_user_session_path, :method => :delete, :id => "logout", :title => "Logout" do %>
-                        <i class="fa fa-sign-out"></i>
-            	    <% end %>
-            	    <%= link_to new_place_path, :title => "Add a place" do %>
-            	      <i class="fa fa-plus"></i>
-            	    <% end %>
-            	</ul>
-            <% else %>
-                <ul id="navigation_links">
-                    <%= link_to root_path do %>
-            	        <i class="fa fa-home"></i>
-            	    <% end %>
-            		<%= link_to new_user_session_path, :id => "login", :title => "Login" do %>
-            		    <i class="fa fa-sign-in"></i>
-            		<% end %>
-            	    <%= link_to new_user_registration_path, :id => "register", :title => "Register" do %> 
-                        <i class="fa fa-user-plus"></i>
-            	    <% end %>
-            	</ul>
-            <% end %>
-            </div> <!-- Close the #options-container div -->
+            <%= yield %>
+                
+                <% if user_signed_in? %>
+                    <ul id="navigation_links">
+                		<%= link_to root_path, :title => "Home" do %>
+                		    <i class="fa fa-home"></i>
+                		<% end %>
+                    	<%= link_to current_user_places_path, :id => "logged_in", :title => "View your places" do %>
+                            <i class="fa fa-user"></i>
+                    	<% end %>
+                	    <%= link_to destroy_user_session_path, :method => :delete, :id => "logout", :title => "Logout" do %>
+                            <i class="fa fa-sign-out"></i>
+                	    <% end %>
+                	    <%= link_to new_place_path, :title => "Add a place" do %>
+                	      <i class="fa fa-plus"></i>
+                	    <% end %>
+                	</ul>
+                <% else %>
+                    <ul id="navigation_links">
+                        <%= link_to root_path do %>
+                	        <i class="fa fa-home"></i>
+                	    <% end %>
+                		<%= link_to new_user_session_path, :id => "login", :title => "Login" do %>
+                		    <i class="fa fa-sign-in"></i>
+                		<% end %>
+                	    <%= link_to new_user_registration_path, :id => "register", :title => "Register" do %> 
+                            <i class="fa fa-user-plus"></i>
+                	    <% end %>
+                	</ul>
+                <% end %>
+            </div> <!-- Close the options container -->
         </div>
       
         <script type="text/javascript" charset="utf-8">
