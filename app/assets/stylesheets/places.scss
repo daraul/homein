@@ -52,10 +52,6 @@ html {
                     color: $highlight-color;
                 }
                 
-                #latitude_field, #longitude_field, #contact_field, #available_field {
-                    display: none;
-                }
-                
                 #rooms_field {
                     float: left;
                     margin-right: 10px;
@@ -179,6 +175,22 @@ html {
                 #navigation_links {
                     @media screen and (orientation: landscape) {
                         justify-content: flex-end;
+                    }
+                }
+            }
+        }
+        
+        #main.container.edit {
+            @extend #main.container.show;
+            
+            #listing.container {
+                form.edit_place {
+                    #longitude_field {
+                        //display: none;
+                    }
+                    
+                    #latitude_field {
+                        //@extend #longitude_field;
                     }
                 }
             }

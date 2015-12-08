@@ -15,6 +15,7 @@ $(document).on 'page:change', () ->
     client = algoliasearch(ApplicationID, SearchOnlyApiKey)
     
     index = client.initIndex('homein_places_' + window.environment)
+    window.environment = undefined
     
     facetsStats = window.facetsStats
     window.facetsStats = undefined 
@@ -239,7 +240,6 @@ $(document).on 'page:change', () ->
             inputBox.value = values[inputBox.dataset["facet"]]["max"]
         
         $("#facets.container #sliders.container input").change () ->
-            window.option = this 
             facet = this.dataset['facet']
             
             values = [this.parentElement.parentElement.children[0].firstElementChild.value, this.parentElement.parentElement.children[2].firstElementChild.value]
@@ -323,13 +323,27 @@ $(document).on 'page:change', () ->
         
         return map 
     
-    placeMarker = (map) ->
+    placeMarker = (map, draggable) ->
         marker = new google.maps.Marker 
             position: map.getCenter()
             map: map
-            draggable: false 
+            draggable: draggable
         
         return marker 
+    
+    setLatLng = (position) ->
+        $("#main.container.edit #listing.container form.edit_place #latitude_field #place_latitude").val(position.lat())
+        $("#main.container.edit #listing.container form.edit_place #longitude_field #place_longitude").val(position.lng())
+    
+    reverseGeocode = (position, callback) ->
+        geocoder = new google.maps.Geocoder()
+        
+        $("form .field #place_address").attr("disabled", "disabled")
+        
+        geocoder.geocode( { 'latLng' : position }, (results, status) ->
+            if callback
+                callback(results)
+        )
     
     if /^\/(places)?\/?$/.test(location.pathname)
         search(getQuery(), getFacetFilters(), getNumericFilters(), (content) ->
@@ -343,7 +357,26 @@ $(document).on 'page:change', () ->
     else if /^\/places\/\d+\/?$/.test(location.pathname)
         map = initializeMap($("#listing.container #map")[0])
         
-        placeMarker(map)
+        placeMarker(map, false)
+    else if /^\/places\/\d+\/edit\/?$/.test(location.pathname)
+        map = initializeMap($("#listing.container #map")[0])
+        
+        marker = placeMarker(map, true)
+        
+        marker.addListener('dragend', () ->
+            setLatLng(marker.position)
+            
+            $("#main.container.edit #listing.container form.edit_place .field #place_address").attr("disabled", "disabled")
+            
+            reverseGeocode(marker.position, (results) ->
+                if results.length > 0 
+                    $("#main.container.edit #listing.container form.edit_place .field #place_address").val(results[0].formatted_address)
+                else 
+                    $("#alert").html("There's nothing there! Try again?")
+                
+                $("#main.container.edit #listing.container form.edit_place .field #place_address").removeAttr("disabled")
+            )
+        ) 
     else if /^\/places\/new\/?$/.test(location.pathname)
         form = window.form 
         window.form = undefined 

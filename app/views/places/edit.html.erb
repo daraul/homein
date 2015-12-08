@@ -1,4 +1,7 @@
-<script>
-    window.form = '<%= escape_javascript(render 'form') %>';
-    window.place = (<%= raw(@place.to_json) %>);
-</script>
+<div id="listing" class="container">
+    <%= render 'form' %>
+    
+    <div id="map" data-latitude="<%= @place.latitude %>" data-longitude="<%= @place.longitude %>"></div>
+</div>
+
+<div id="options" class="container">
