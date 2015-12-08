@@ -46,4 +46,18 @@
     }
 }
 
+@mixin listing() {
+    h1 {
+        margin: 0 0 $default_bottom_margin 0;
+    }
+    
+    p {
+        margin: 0 0 $default_bottom_margin 0;
+    }
+    
+    p:last-child {
+        margin: 0;
+    }
+}
+
 $default_bottom_margin: 15px;

@@ -16,17 +16,19 @@ html {
         }
         flex-direction: column;
         
-        #main.container {
+        .container {
             display: flex;
+        }
+        
+        #main.container {
             height: inherit;
             padding: 15px;
             box-sizing: border-box;
-            @media screen and (orientation: portrait) and (min-resolution: 190dpi) {
+            @media screen and (orientation: portrait) {
                 flex-direction: column;
             }
             
             #content.container {
-                display: flex;
                 padding: 0 15px 0 0;
                 flex-direction: column;
                 flex-grow: 2;
@@ -35,17 +37,11 @@ html {
                 .listing {
                     margin-bottom: $default_bottom_margin;
                     
-                    h1 {
-                        margin: 0 0 $default_bottom_margin 0;
-                    }
-                    
-                    p {
-                        margin: 0 0 $default_bottom_margin 0;
-                    }
-                    
-                    p:last-child {
-                        margin: 0;
-                    }
+                    @include listing();
+                }
+                
+                .listing:last-child {
+                    margin-bottom: 0;
                 }
                 
                 .place-management-link {
@@ -91,11 +87,24 @@ html {
                 }
             }
             
-            #options.container {
-                display: flex;
+            #listing.container {
                 flex-direction: column;
                 flex-grow: 1;
-                margin: 0 0 0 15px;
+                
+                @include listing();
+                
+                #map {
+                    height: 400px;
+                    width: 400px;
+                }
+            }
+            
+            #options.container {
+                flex-direction: column;
+                flex-grow: 1;
+                @media screen and (orientation: landscape) {
+                    margin: 0 0 0 15px;
+                }
                 
                 .fa {
                     font-size: 1.5em;
@@ -103,7 +112,6 @@ html {
                 }
                 
                 #facets.container {
-                    display: flex;
                     flex-grow: 1;
                     flex-wrap: wrap;
                     justify-content: center;
@@ -111,20 +119,17 @@ html {
                     @include flex-direction-inverse();
                     
                     #sliders.container {
-                        display: flex;
                         @include flex-direction();
                         width: 100%;
                         flex-grow: 1;
                         margin-bottom: $default_bottom_margin;
                         
-                        .facet {
-                            display: flex;
+                        .facet.container {
                             @include flex-direction-inverse();
                             align-items: center;
                             margin: 10px 0;
                             
-                            #input.container {
-                                display: flex;
+                            .slider.container {
                                 align-items: center;
                                 flex-grow: 1;
                                 @include flex-direction-inverse-reverse();
@@ -161,6 +166,20 @@ html {
                     display: flex;
                     padding: 0;
                     justify-content: center;
+                }
+            }
+        }
+        
+        #main.container.show {
+            flex-direction: column;
+            
+            #options.container {
+                flex-grow: 0;
+                
+                #navigation_links {
+                    @media screen and (orientation: landscape) {
+                        justify-content: flex-end;
+                    }
                 }
             }
         }

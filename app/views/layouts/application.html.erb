@@ -23,9 +23,7 @@
             <% end %>
         <% end %> 
         
-        <div class="container" id="main">
-            <div id="content" class="container"></div>
-            
+        <div class="container <%= params[:action] %>" id="main">
             <%= yield %>
                 
                 <% if user_signed_in? %>

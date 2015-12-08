@@ -1,9 +1,18 @@
-<script>
-    window.place = <%= raw(@place.to_json) %>;
+<div id="listing" class="container">
+    <h1><%= @place.address %></h1>
+    <p><%= @place.description %></p>
+    <p>Price: <%= @place.price.to_s(:currency) %></p>
+    <p>Pictures: </p>
     
-    window.place.pictures = [];
-    
-    <% @place.pictures.each do |picture| %>
-        window.place.pictures.push("<%= picture.image.url %>")
+    <% if @place.has_attribute?(:pictures) %>
+        <div id="pictures">
+            <% @place.pictures.each do |picture| %>
+                <%= image_tag picture %>
+            <% end %>
+        </div>
     <% end %>
-</script>
+    
+    <div id="map" data-latitude="<%= @place.latitude %>" data-longitude="<%= @place.longitude %>"></div>
+</div>
+
+<div id="options" class="container">

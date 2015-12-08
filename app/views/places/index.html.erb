@@ -2,13 +2,15 @@
     var facetsStats = <%= raw(@facetsStats.to_json) %>;
 </script>
 
+<div id="content" class="container"></div>
+
 <div id="options" class="container">
     <div id="facets" class="container">
         <span id="sliders" class="container">
             <% @facetsStats.keys.each do |facet| %>
-                <div class="facet" id="<%= facet %>">
+                <div class="facet container" id="<%= facet %>">
                     <%= facet.capitalize %>: 
-                    <span id="input" class="container">
+                    <span class="slider container">
                         <span>
                             <% if facet == "price" %>
                                 $

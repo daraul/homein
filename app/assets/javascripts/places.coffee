@@ -265,7 +265,7 @@ $(document).on 'page:change', () ->
                 renderList(content)
             )
         
-        $("#facets.container .slider").slider
+        $("#facets.container .slider.container .slider").slider
             range: true,
             create: () ->
                 $(this).slider( "option", "orientation", orientation )
@@ -315,28 +315,40 @@ $(document).on 'page:change', () ->
                 
         $("#content.container").html(content)
     
-    decodeURL = () ->
-        if /^\/(places)?\/?$/.test(location.pathname)
-            search(getQuery(), getFacetFilters(), getNumericFilters(), (content) ->
-                renderList(content)
-            )
-            
-            window.addEventListener 'resize', ->
-                $("#facets.container .slider").slider("option", "orientation", getFacetSliderOrientation())
-            
-            renderFacets(getQuery(), getFacetFilters(), getNumericFilters(), getFacetSliderOrientation())
-                
-        else if /^\/places\/\d+\/?$/.test(location.pathname)
-            place = window.place
-        else if /^\/places\/\d+\/edit\/?$/.test(location.pathname)
-            form = window.form 
-            window.form = undefined 
-        else if /^\/places\/new\/?$/.test(location.pathname)
-            form = window.form 
-            window.form = undefined 
-        else if /^\/you\/?$/.test(location.pathname)
-            places = window.places 
-            window.places = undefined
+    initializeMap = (mapContainer) ->
+        map = new google.maps.Map(mapContainer, {
+            center: {lat: parseFloat(mapContainer.dataset['latitude']), lng: parseFloat(mapContainer.dataset['longitude'])},
+            zoom: 14
+        });
+        
+        return map 
     
-    decodeURL()
+    placeMarker = (map) ->
+        marker = new google.maps.Marker 
+            position: map.getCenter()
+            map: map
+            draggable: false 
+        
+        return marker 
+    
+    if /^\/(places)?\/?$/.test(location.pathname)
+        search(getQuery(), getFacetFilters(), getNumericFilters(), (content) ->
+            renderList(content)
+        )
+        
+        window.addEventListener 'resize', ->
+            $("#facets.container .slider").slider("option", "orientation", getFacetSliderOrientation())
+        
+        renderFacets(getQuery(), getFacetFilters(), getNumericFilters(), getFacetSliderOrientation())
+    else if /^\/places\/\d+\/?$/.test(location.pathname)
+        map = initializeMap($("#listing.container #map")[0])
+        
+        placeMarker(map)
+    else if /^\/places\/new\/?$/.test(location.pathname)
+        form = window.form 
+        window.form = undefined 
+    else if /^\/you\/?$/.test(location.pathname)
+        places = window.places 
+        window.places = undefined
+    
     checkVisited()
