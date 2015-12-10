@@ -1,7 +1,7 @@
 <div id="content" class="container">
     <% @places.each do |place| %>
         <div class="listing">
-            <h1 class="address"><%= link_to(place.address, place) %></h1>
+            <h1 class="address"><%= link_to(place.address, place, remote: true) %></h1>
             
             <p class="description"><%= place.description %></p>
             
