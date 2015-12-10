@@ -95,6 +95,23 @@ html {
                 }
             }
             
+            #login.container {
+                flex-direction: column;
+                flex-grow: 2;
+            }
+            
+            #register.container {
+                @extend #login.container;
+            }
+            
+            #confirmation.container {
+                @extend #login.container;
+            }
+            
+            #password.container {
+                @extend #login.container;
+            }
+            
             #options.container {
                 flex-direction: column;
                 flex-grow: 1;
