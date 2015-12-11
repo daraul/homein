@@ -351,10 +351,10 @@ $(document).on 'page:change', () ->
             renderList(content)
         )
         
-        window.addEventListener 'resize', ->
-            $("#facets.container .slider").slider("option", "orientation", getFacetSliderOrientation())
-        
         renderFacets(getQuery(), getFacetFilters(), getNumericFilters(), getFacetSliderOrientation())
+        
+        window.addEventListener 'resize', ->
+            $(".slider.container .slider").slider("option", "orientation", getFacetSliderOrientation())
     else if /^\/places\/\d+(\/|(\/edit\/?))?$/.test(location.pathname)
         mapContainer = $("#listing.container #map")[0]
         
