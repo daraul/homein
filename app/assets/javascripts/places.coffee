@@ -315,17 +315,17 @@ $(document).on 'page:change', () ->
                 
         $("#content.container").html(content)
     
-    initializeMap = (mapContainer) ->
+    initializeMap = (mapContainer, position) ->
         map = new google.maps.Map(mapContainer, {
-            center: {lat: parseFloat(mapContainer.dataset['latitude']), lng: parseFloat(mapContainer.dataset['longitude'])},
+            center: position
             zoom: 14
         });
         
         return map 
     
-    placeMarker = (map, draggable) ->
+    placeMarker = (map, position, draggable) ->
         marker = new google.maps.Marker 
-            position: map.getCenter()
+            position: position
             map: map
             draggable: draggable
         
@@ -354,32 +354,34 @@ $(document).on 'page:change', () ->
             $("#facets.container .slider").slider("option", "orientation", getFacetSliderOrientation())
         
         renderFacets(getQuery(), getFacetFilters(), getNumericFilters(), getFacetSliderOrientation())
-    else if /^\/places\/\d+\/?$/.test(location.pathname)
-        map = initializeMap($("#listing.container #map")[0])
+    else if /^\/places\/\d+(\/|(\/edit\/?))?$/.test(location.pathname)
+        mapContainer = $("#listing.container #map")[0]
         
-        placeMarker(map, false)
-    else if /^\/places\/\d+\/edit\/?$/.test(location.pathname)
-        map = initializeMap($("#listing.container #map")[0])
+        position = new google.maps.LatLng(parseFloat(mapContainer.dataset['latitude']), parseFloat(mapContainer.dataset['longitude']))
         
-        marker = placeMarker(map, true)
+        map = initializeMap(mapContainer, position)
         
-        marker.addListener('dragend', () ->
-            setLatLng(marker.position)
+        if /^\/places\/\d+\/edit\/?$/.test(location.pathname)
+            marker = placeMarker(map, position, true)
             
-            $("#main.container.edit #listing.container form.edit_place .field #place_address").attr("disabled", "disabled")
-            
-            reverseGeocode(marker.position, (results) ->
-                if results.length > 0 
-                    $("#main.container.edit #listing.container form.edit_place .field #place_address").val(results[0].formatted_address)
-                else 
-                    $("#alert").html("There's nothing there! Try again?")
+            marker.addListener('dragend', () ->
+                setLatLng(marker.position)
                 
-                $("#main.container.edit #listing.container form.edit_place .field #place_address").removeAttr("disabled")
-            )
-        ) 
+                $("#main.container.edit #listing.container form.edit_place .field #place_address").attr("disabled", "disabled")
+                
+                reverseGeocode(marker.position, (results) ->
+                    if results.length > 0 
+                        $("#main.container.edit #listing.container form.edit_place .field #place_address").val(results[0].formatted_address)
+                    else 
+                        $("#alert").html("There's nothing there! Try again?")
+                    
+                    $("#main.container.edit #listing.container form.edit_place .field #place_address").removeAttr("disabled")
+                )
+            ) 
+        else 
+            marker = placeMarker(map, position, false)
     else if /^\/places\/new\/?$/.test(location.pathname)
-        form = window.form 
-        window.form = undefined 
+        mapContainer = $("#listing.container #map")[0]
     else if /^\/you\/?$/.test(location.pathname)
         places = window.places 
         window.places = undefined
