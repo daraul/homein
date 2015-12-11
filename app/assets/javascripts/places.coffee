@@ -34,7 +34,7 @@ $(document).on 'page:change', () ->
     
     setTimeout(() ->
         $("#alert, #notice").html("");
-    , 2500)
+    , 10000)
     
     checkVisited = () ->
         if document.cookie.indexOf("visited") >= 0 
@@ -174,6 +174,7 @@ $(document).on 'page:change', () ->
         if navigator.geolocation 
             navigator.geolocation.getCurrentPosition((result) ->
                 position = new google.maps.LatLng(result.coords.latitude, result.coords.longitude)
+                
                 callback(position)
             , () ->
                 callback(false) 
@@ -332,8 +333,8 @@ $(document).on 'page:change', () ->
         return marker 
     
     setLatLng = (position) ->
-        $("#main.container.edit #listing.container form.edit_place #latitude_field #place_latitude").val(position.lat())
-        $("#main.container.edit #listing.container form.edit_place #longitude_field #place_longitude").val(position.lng())
+        $("#latitude_field #place_latitude").val(position.lat())
+        $("#longitude_field #place_longitude").val(position.lng())
     
     reverseGeocode = (position, callback) ->
         geocoder = new google.maps.Geocoder()
@@ -377,11 +378,39 @@ $(document).on 'page:change', () ->
                     
                     $("#main.container.edit #listing.container form.edit_place .field #place_address").removeAttr("disabled")
                 )
-            ) 
+            )
         else 
             marker = placeMarker(map, position, false)
     else if /^\/places\/new\/?$/.test(location.pathname)
         mapContainer = $("#listing.container #map")[0]
+        
+        getPosition((position) ->
+            if position 
+                position = position 
+            else 
+                position = new google.maps.LatLng(40.7058316, -74.2581884)
+                
+                $("#notice").html("You didn't provide your location. Defaulting to New York, New York!")
+            
+            map = initializeMap(mapContainer, position)
+            
+            marker = placeMarker(map, position, true)
+            
+            marker.addListener('dragend', () ->
+                setLatLng(marker.position)
+                
+                $(".field #place_address").attr("disabled", "disabled")
+                
+                reverseGeocode(marker.position, (results) ->
+                    if results.length > 0 
+                        $(".field #place_address").val(results[0].formatted_address)
+                    else 
+                        $("#alert").html("There's nothing there! Try again?")
+                    
+                    $(".field #place_address").removeAttr("disabled")
+                )
+            )
+        )
     else if /^\/you\/?$/.test(location.pathname)
         places = window.places 
         window.places = undefined
