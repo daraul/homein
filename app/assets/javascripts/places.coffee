@@ -356,7 +356,7 @@ $(document).on 'page:change', () ->
         window.addEventListener 'resize', ->
             $(".slider.container .slider").slider("option", "orientation", getFacetSliderOrientation())
     else if /^\/places\/\d+(\/|(\/edit\/?))?$/.test(location.pathname)
-        mapContainer = $("#listing.container #map")[0]
+        mapContainer = $("#map")[0]
         
         position = new google.maps.LatLng(parseFloat(mapContainer.dataset['latitude']), parseFloat(mapContainer.dataset['longitude']))
         
@@ -368,21 +368,21 @@ $(document).on 'page:change', () ->
             marker.addListener('dragend', () ->
                 setLatLng(marker.position)
                 
-                $("#main.container.edit #listing.container form.edit_place .field #place_address").attr("disabled", "disabled")
+                $(".field #place_address").attr("disabled", "disabled")
                 
                 reverseGeocode(marker.position, (results) ->
                     if results.length > 0 
-                        $("#main.container.edit #listing.container form.edit_place .field #place_address").val(results[0].formatted_address)
+                        $(".field #place_address").val(results[0].formatted_address)
                     else 
                         $("#alert").html("There's nothing there! Try again?")
                     
-                    $("#main.container.edit #listing.container form.edit_place .field #place_address").removeAttr("disabled")
+                    $(".field #place_address").removeAttr("disabled")
                 )
             )
         else 
             marker = placeMarker(map, position, false)
     else if /^\/places\/new\/?$/.test(location.pathname)
-        mapContainer = $("#listing.container #map")[0]
+        mapContainer = $("#map")[0]
         
         getPosition((position) ->
             if position 

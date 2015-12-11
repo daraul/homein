@@ -1,29 +1,9 @@
-<div id="listing" class="container">
-    <h1><%= @place.address %></h1>
-    
-    <p><%= @place.description %></p>
-    
-    <p>Price: <%= @place.price.to_s(:currency) %></p>
-    
-    <% if @place.pictures.count > 0 %>
-        <p>Pictures: </p>
-        
-        <div id="pictures">
-            <% @place.pictures.each do |picture| %>
-                <%= link_to(picture.image.url, target: "_blank") do %>
-                    <%= image_tag(picture.image) %>
-                <% end %>
-            <% end %>
-        </div>
-    <% end %>
-    
-    <div id="map" data-latitude="<%= @place.latitude %>" data-longitude="<%= @place.longitude %>"></div>
-    
-    <% if @place.user = current_user %>
-        <td><%= link_to 'Edit', edit_place_path(@place) %></td>
-        
-        <td><%= link_to 'Destroy', @place, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-    <% end %>
-</div>
+<%= render @place %>
 
+<% if @place.user = current_user %>
+    <td><%= link_to 'Edit', edit_place_path(@place) %></td>
+    
+    <td><%= link_to 'Destroy', @place, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+<% end %>
+    
 <div id="options" class="container">

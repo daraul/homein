@@ -1,21 +1,5 @@
 <div id="content" class="container">
-    <% @places.each do |place| %>
-        <div class="listing">
-            <h1 class="address"><%= link_to(place.address, place, remote: true) %></h1>
-            
-            <p class="description"><%= place.description %></p>
-            
-            <p>
-                Price: <span class="price"><%= place.price.to_s(:currency) %></span>
-                , For: <spa class="for"><%= place.for %></span>
-            </p>
-            
-            <p>
-                Rooms: <span class="rooms"><%= place.rooms %></span>
-                , Bathrooms: <span class="bathrooms"><%= place.bathrooms %></span>
-            </p>
-        </div>
-    <% end %>
+    <%= render @places %>
 </div>
 
 <div id="options" class="container">
