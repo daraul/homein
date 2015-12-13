@@ -347,10 +347,6 @@ $(document).on 'page:change', () ->
         )
     
     if /^\/(places)?\/?$/.test(location.pathname)
-        search(getQuery(), getFacetFilters(), getNumericFilters(), (content) ->
-            renderList(content)
-        )
-        
         renderFacets(getQuery(), getFacetFilters(), getNumericFilters(), getFacetSliderOrientation())
         
         window.addEventListener 'resize', ->

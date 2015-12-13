@@ -2,7 +2,15 @@
     var facetsStats = <%= raw(@facetsStats.to_json) %>;
 </script>
 
-<div id="content" class="container"></div>
+<div id="content" class="container">
+    <div id="listings" class="container">
+        <%= render @places %>
+    </div>
+    
+    <div id="infiniteScrolling">
+        <%= will_paginate @places %>
+    </div>
+</div>
 
 <div id="options" class="container">
     <div id="facets" class="container">

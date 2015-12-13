@@ -12,4 +12,6 @@ class Place < ActiveRecord::Base
 	algoliasearch index_name: "homein_places", per_environment: true do 
 	    attributesForFaceting [:rooms, :bathrooms, :price, :for]
 	end 
+	
+	self.per_page = 10
 end
