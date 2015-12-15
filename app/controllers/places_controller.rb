@@ -6,7 +6,7 @@ class PlacesController < ApplicationController
     # GET /places
     # GET /places.json
     def index
-        @places = Place.paginate(:page => params[:page], :per_page => 10)
+        @places = Place.search(params[:query]).paginate(:page => params[:page], :per_page => 10)
         
         @facetsStats = {
             "price" => {

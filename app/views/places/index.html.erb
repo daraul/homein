@@ -45,5 +45,10 @@
               <option value='rent'>Rent</option>
             </select>  
         </span>
-        <span id="search"><i class="fa fa-search"></i><input id="searchbar" name="query" placeholder="Search places" type="text"></span>
+        <%= form_tag places_path, :method => 'get', :id => "places_search" do %>
+            <p>
+                <%= text_field_tag :query, params[:query] %>
+                <%= submit_tag "Search", :name => nil %>
+            </p>
+        <% end %>
     </div>

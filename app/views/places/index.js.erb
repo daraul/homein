@@ -1,6 +1,6 @@
 $('#listings.container').append('<%= j render @places %>');
 <% if @places.next_page %>
-    $('.pagination').replaceWith('<%= j will_paginate @places %>');
+    $('#infiniteScrolling').html('<%= j will_paginate @places %>');
 <% else %>
     $(window).off('scroll');
     $('.pagination').remove();

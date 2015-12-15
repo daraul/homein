@@ -7,11 +7,13 @@ class Place < ActiveRecord::Base
 	validates_presence_of :price, :rooms, :bathrooms, :description, :for, :address, message: "All fields are required, but pictures aren't." 
 	validates_length_of :pictures, maximum: 3, message: "3 or less pictures, please!"
 	
-	include AlgoliaSearch
-	
-	algoliasearch index_name: "homein_places", per_environment: true do 
-	    attributesForFaceting [:rooms, :bathrooms, :price, :for]
-	end 
-	
 	self.per_page = 10
+	
+    def self.search(query)
+        if query
+            where("address LIKE :query or description LIKE :query", {query: "%#{query}%"})
+        else
+            all
+        end
+    end
 end

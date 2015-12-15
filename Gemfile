@@ -50,9 +50,6 @@ gem 'rename'
 # Use Unicorn as the app server
 # gem 'unicorn'
 
-# Search with algoliasearch
-gem "algoliasearch-rails"
-
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
