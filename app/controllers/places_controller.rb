@@ -6,22 +6,7 @@ class PlacesController < ApplicationController
     # GET /places
     # GET /places.json
     def index
-        @places = Place.search(params[:query]).paginate(:page => params[:page], :per_page => 10)
-        
-        @facetsStats = {
-            "price" => {
-                "max" => Place.maximum(:price),
-                "min" => Place.minimum(:price)
-            },
-            "rooms" => {
-                "max" => Place.maximum(:rooms),
-                "min" => Place.minimum(:rooms)
-            },
-            "bathrooms" => {
-                "max" => Place.maximum(:bathrooms),
-                "min" => Place.minimum(:bathrooms)
-            }
-        }
+        @places = Place.search(params[:query]).filter(params).paginate(:page => params[:page], :per_page => 10)
         
         respond_to do |format|
             format.html 

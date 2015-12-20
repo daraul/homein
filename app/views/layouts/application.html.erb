@@ -16,13 +16,6 @@
         <p id="notice"><%= notice %></p>
         <p id="alert"><%= alert %></p>
         
-        <%= javascript_tag do %>
-            window.environment = "<%= Rails.env %>"
-            <% if current_user %>
-                currentuser = <%= current_user.id %>
-            <% end %>
-        <% end %> 
-        
         <div class="container <%= params[:action] %>" id="main">
             <%= yield %>
                 

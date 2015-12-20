@@ -1,0 +1,30 @@
+<div id="facets" class="container">
+    <%= form_tag places_url, :method => 'get', :id => "places_filter" do %>
+        <%= hidden_field_tag "price[min]", params.has_key?('price') ? params['price']['min'] : nil, :id => "min_price" %>
+        <%= hidden_field_tag "price[max]", params.has_key?('price') ? params['price']['max'] : nil, :id => "max_price" %>
+        
+        <%= hidden_field_tag "rooms[min]", params.has_key?('rooms') ? params['rooms']['min'] : nil, :id => "min_rooms" %>
+        <%= hidden_field_tag "rooms[max]", params.has_key?('rooms') ? params['rooms']['max'] : nil, :id => "max_rooms" %>
+
+        <%= hidden_field_tag "bathrooms[min]", params.has_key?('bathrooms') ? params['bathrooms']['min'] : nil, :id => "min_bathrooms" %>
+        <%= hidden_field_tag "bathrooms[max]", params.has_key?('bathrooms') ? params['bathrooms']['max'] : nil, :id => "max_bathrooms" %>
+        
+        <%= submit_tag "Filter" %>
+    <% end %>
+    
+    <div class="slider" id="price" data-min="<%= Place.minimum(:price) %>" data-max="<%= Place.maximum(:price) %>" data-low="<%= params.has_key?('price') && !params[:price][:min].blank? ? params['price']['min'] : Place.minimum(:price) %>" data-high="<%= params.has_key?('price') && !params[:price][:max].blank? ? params['price']['max'] : Place.maximum(:price) %>"></div>
+    
+    <div class="slider" id="rooms" data-min="<%= Place.minimum(:rooms) %>" data-max="<%= Place.maximum(:rooms) %>" data-low="<%= params.has_key?('rooms') && !params[:rooms][:min].blank? ? params['rooms']['min'] : Place.minimum(:rooms) %>" data-high="<%= params.has_key?('rooms') && !params[:rooms][:max].blank? ? params['rooms']['max'] : Place.maximum(:rooms) %>"></div>
+    
+    <div class="slider" id="bathrooms" data-min="<%= Place.minimum(:bathrooms) %>" data-max="<%= Place.maximum(:bathrooms) %>" data-low="<%= params.has_key?('bathrooms') && !params[:bathrooms][:min].blank? ? params['bathrooms']['min'] : Place.minimum(:bathrooms) %>" data-high="<%= params.has_key?('bathrooms') && !params[:bathrooms][:max].blank? ? params['bathrooms']['max'] : Place.maximum(:bathrooms) %>"></div>
+    
+    <span id="for">
+        For: 
+        
+        <select name='place_for' class="facet" id="place_for">
+            <option value=""></option>
+            <option value='sale'>Sale</option>
+            <option value='rent'>Rent</option>
+        </select>
+    </span>
+</div>

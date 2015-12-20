@@ -8,6 +8,20 @@ String.prototype.capitalizeFirstLetter = () ->
     this.charAt(0).toUpperCase() + this.slice(1)
 
 $(document).on 'page:change', () ->
+    $('.slider').slider
+        range: true
+        
+        create: () ->
+            $(this).slider( "option", "min", $(this).data("min") )
+            $(this).slider( "option", "max", $(this).data("max") )
+            $(this).slider( "option", "values", [ $(this).data('low'), $(this).data('high') ] )
+        
+        slide: (event, ui) ->
+            console.log $(this).attr('id')
+            facet = $(this).attr('id')
+            $("#min_" + facet).val(ui.values[0])
+            $("#max_" + facet).val(ui.values[1])
+    
     $.xhrPool = []
 
     $.xhrPool.abortAll = ->
