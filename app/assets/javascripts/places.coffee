@@ -17,7 +17,6 @@ $(document).on 'page:change', () ->
             $(this).slider( "option", "values", [ $(this).data('low'), $(this).data('high') ] )
         
         slide: (event, ui) ->
-            console.log $(this).attr('id')
             facet = $(this).attr('id')
             $("#min_" + facet).val(ui.values[0])
             $("#max_" + facet).val(ui.values[1])

@@ -39,6 +39,10 @@ class Place < ActiveRecord::Base
                 end 
             end 
             
+            if parameters[:for] && !parameters[:for].blank?
+                filters[:for] = parameters[:for].downcase
+            end 
+            
             where(filters)
         else 
             all
