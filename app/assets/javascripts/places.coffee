@@ -30,39 +30,6 @@ $(document).on 'page:change', () ->
     
     window.addEventListener 'resize', ->
         $(".slider").slider("option", "orientation", getFacetSliderOrientation())
-    
-    $.xhrPool = []
-
-    $.xhrPool.abortAll = ->
-        $(this).each (idx, jqXHR) ->
-            jqXHR.abort()
-        $.xhrPool.length = 0
-    
-    $.ajaxSetup
-        beforeSend: (jqXHR) ->
-            $.xhrPool.abortAll()
-            
-            $.xhrPool.push jqXHR
-        complete: (jqXHR) ->
-            index = $.xhrPool.indexOf(jqXHR)
-            
-            if index > -1
-                $.xhrPool.splice index, 1
-    
-    ###$("#places_search").submit () ->
-        $.ajax({
-            url: $("#places_search").attr("action")
-            data: $("#places_search").serialize()
-            dataType: "script"
-            beforeSend: (jqXHR) ->
-                $.xhrPool.abortAll()
-            
-                $.xhrPool.push jqXHR
-                
-                $('#listings.container, #infiniteScrolling').html("")
-        })
-        
-        return false###
         
     if $('#infiniteScrolling').size() > 0
         $("#content.container").on 'scroll', ->
