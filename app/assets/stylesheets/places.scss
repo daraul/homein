@@ -2,219 +2,54 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-@import 'icons', 'colours', 'transitions', 'layout';
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+}
 
-html {
-	height: 100%;
+body {
+    padding: 10px 0;
+}
 
-    body {
-        display: flex;
-        height: inherit;
-        margin: 0;
-        @media screen and (orientation: portrait) and (min-resolution: 190dpi) {
-            font-size: 2em;
-        }
-        flex-direction: column;
-        
-        .container {
-            display: flex;
-        }
-        
-        #main.container {
-            height: inherit;
-            padding: 15px;
-            box-sizing: border-box;
-            @media screen and (orientation: portrait) {
-                flex-direction: column;
-            }
-            
-            #content.container {
-                padding: 0 15px 0 0;
-                flex-direction: column;
-                flex-grow: 2;
-                overflow-y: scroll;
-                
-                .listing {
-                    margin-bottom: $default_bottom_margin;
-                    
-                    @include listing();
-                }
-                
-                .listing:last-child {
-                    margin-bottom: 0;
-                }
-                
-                .place-management-link {
-                    color: #333;
-                }
-                
-                .place-management-link:hover {
-                    color: $highlight-color;
-                }
-                
-                #rooms_field {
-                    float: left;
-                    margin-right: 10px;
-                }
-            
-                .field { 
-                    #place_description {
-                        width: 500px;
-                        height: 75px;
-                    }
-                    
-                    #place_address {
-                        width: 500px;
-                    }
-                }
-        
-                ul.authorization_links {
-                    position: absolute;
-                    bottom: 0;
-                    width: 100%;
-                    text-align: center;
-                    font-weight: bold;
-                    padding: 0;
-                    text-shadow: 0px 0px 25px #fff, 0px 0px 25px #fff, 0px 0px 25px #fff;
-                    
-                    li {
-                        list-style-type: none;
-                    }
-                }
-            }
-            
-            #listings.container {
-                flex-direction: column;
-                
-                .listing.container {
-                    flex-direction: inherit;
-                    flex-grow: 1;
-                    
-                    @include listing();
-                    
-                    #map {
-                        height: 400px;
-                        width: 400px;
-                    }
-                }
-            }
-            
-            #login.container {
-                flex-direction: column;
-                flex-grow: 2;
-            }
-            
-            #register.container {
-                @extend #login.container;
-            }
-            
-            #confirmation.container {
-                @extend #login.container;
-            }
-            
-            #password.container {
-                @extend #login.container;
-            }
-            
-            #options.container {
-                flex-direction: column;
-                flex-grow: 1;
-                @media screen and (orientation: landscape) {
-                    margin: 0 0 0 15px;
-                }
-                
-                .fa {
-                    font-size: 1.5em;
-                    padding: 0 5px;
-                }
-                
-                #facets.container {
-                    flex-grow: 1;
-                    flex-wrap: wrap;
-                    justify-content: center;
-                    margin-bottom: $default_bottom_margin;
-                    @include flex-direction-inverse();
-                    
-                    #sliders.container {
-                        @include flex-direction();
-                        width: 100%;
-                        flex-grow: 1;
-                        margin-bottom: $default_bottom_margin;
-                        
-                        .facet.container {
-                            @include flex-direction-inverse();
-                            align-items: center;
-                            margin: 10px 0;
-                            
-                            .slider.container {
-                                align-items: center;
-                                flex-grow: 1;
-                                @include flex-direction-inverse-reverse();
-                                
-                                input[type=number] {
-                                    height: 1em;
-                                    border: none;
-                                    @media screen and (orientation: portrait) and (min-resolution: 190dpi) {
-                                        font-size: 1em;
-                                    }
-                                }
-                                
-                                .slider {
-                                    flex-grow: 2;
-                                    @include slider-margins();
-                                }
-                            }
-                        }
-                    }
-                    
-                    #for {
-                        margin-bottom: $default_bottom_margin;
-                    }
-                    
-                    #search {
-                        .fa-search {
-                            font-size: 1em;
-                        }
-                    }
-                }
-                
-                #navigation_links {
-                    margin: 0;
-                    display: flex;
-                    padding: 0;
-                    justify-content: center;
-                }
-            }
-        }
-        
-        #main.container.show {
-            flex-direction: column;
-            
-            #options.container {
-                flex-grow: 0;
-                
-                #navigation_links {
-                    @media screen and (orientation: landscape) {
-                        justify-content: flex-end;
-                    }
-                }
-            }
-        }
-        
-        #main.container.edit {
-            @extend #main.container.show;
-            
-            #listing.container {
-                form.edit_place {
-                    #longitude_field {
-                        //display: none;
-                    }
-                    
-                    #latitude_field {
-                        //@extend #longitude_field;
-                    }
-                }
-            }
-        }
-    }
+.container {
+  box-sizing: inherit;
+  display: flex;
+  flex-direction: inherit;
+}
+
+#content {
+  flex-grow: 1;
+  overflow-y: scroll;
+}
+
+#options, #content {
+  flex-direction: column;
+  padding: 0 15px;
+}
+
+#main {
+  height: 100%;
+  width: 100%;
+}
+
+.listing {
+  margin-bottom: 10px;
+  
+  h1 {
+      margin-top: 0;
+  }
+  
+  p {
+      margin: 0 0 10px 0;
+  }
+  
+  p:last-child {
+      margin-bottom: 0;
+  }
+}
+
+.listing:last-child {
+  margin-bottom: 0;
 }

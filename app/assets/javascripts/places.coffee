@@ -8,10 +8,17 @@ String.prototype.capitalizeFirstLetter = () ->
     this.charAt(0).toUpperCase() + this.slice(1)
 
 $(document).on 'page:change', () ->
+    getFacetSliderOrientation = () ->
+        if window.innerWidth > window.innerHeight 
+            return "vertical"
+        else
+            return "horizontal"
+    
     $('.slider').slider
         range: true
         
         create: () ->
+            $(this).slider( "option", "orientation", getFacetSliderOrientation() )
             $(this).slider( "option", "min", $(this).data("min") )
             $(this).slider( "option", "max", $(this).data("max") )
             $(this).slider( "option", "values", [ $(this).data('low'), $(this).data('high') ] )
@@ -20,6 +27,9 @@ $(document).on 'page:change', () ->
             facet = $(this).attr('id')
             $("#min_" + facet).val(ui.values[0])
             $("#max_" + facet).val(ui.values[1])
+    
+    window.addEventListener 'resize', ->
+        $(".slider").slider("option", "orientation", getFacetSliderOrientation())
     
     $.xhrPool = []
 
@@ -39,7 +49,7 @@ $(document).on 'page:change', () ->
             if index > -1
                 $.xhrPool.splice index, 1
     
-    $("#places_search").submit () ->
+    ###$("#places_search").submit () ->
         $.ajax({
             url: $("#places_search").attr("action")
             data: $("#places_search").serialize()
@@ -52,7 +62,7 @@ $(document).on 'page:change', () ->
                 $('#listings.container, #infiniteScrolling').html("")
         })
         
-        return false
+        return false###
         
     if $('#infiniteScrolling').size() > 0
         $("#content.container").on 'scroll', ->

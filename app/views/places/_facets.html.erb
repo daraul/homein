@@ -26,6 +26,8 @@
         
         <%= select_tag "for", options_for_select(["Sale", "Rent"], params.has_key?('for') ? params['for'] : "" ), include_blank: "Both" %>
         
+        <%= text_field_tag :query, params[:query] %>
+        
         <%= submit_tag "Filter" %>
     <% end %>
 </div>
