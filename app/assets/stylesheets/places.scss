@@ -9,10 +9,6 @@ html, body {
     box-sizing: border-box;
 }
 
-body {
-    padding: 10px 0;
-}
-
 .container {
     box-sizing: inherit;
     display: flex;
@@ -34,6 +30,7 @@ body {
 }
 
 #main {
+    padding: 10px 0;
     height: 100%;
     width: 100%;
 }
