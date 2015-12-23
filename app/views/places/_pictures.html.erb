@@ -1,0 +1,9 @@
+<p>Pictures: </p>
+
+<div id="pictures">
+    <% place.pictures.each do |picture| %>
+        <%= link_to(picture.image.url, target: "_blank") do %>
+            <%= image_tag(picture.image) %>
+        <% end %>
+    <% end %>
+</div>

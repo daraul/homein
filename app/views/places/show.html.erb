@@ -1,11 +1,13 @@
 <div id="content" class="container">
-    <%= render @place %>
-
-    <% if @place.user = current_user %>
-        <td><%= link_to 'Edit', edit_place_path(@place) %></td>
+    <div id="listing" class="container">
+        <%= render @place %>
+    
+        <%= render 'map', place: @place %>
         
-        <td><%= link_to 'Destroy', @place, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-    <% end %>
+        <% if @place.pictures.count > 0 %>
+            <%= render 'pictures', place: @place %>
+        <% end %>
+    </div>
 </div>
     
 <div id="options" class="container">

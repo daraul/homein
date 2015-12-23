@@ -1,35 +1,17 @@
-<div class="listing container">
-    <h1 class="address">
-        <% if params[:action] == "show" %>
-            <%= place.address %>
-        <% else %>
-            <%= link_to(place.address, place) %>
-        <% end %>
-    </h1>
-
-    <p class="description"><%= place.description %></p>
-    
-    <p>
-        Price: <span class="price"><%= place.price.to_s(:currency) %></span>, For: <spa class="for"><%= place.for.capitalize %></span>
-    </p>
-    
-    <p>
-        Rooms: <span class="rooms"><%= place.rooms %></span>, Bathrooms: <span class="bathrooms"><%= place.bathrooms %></span>
-    </p>
-    
+<h1 class="address">
     <% if params[:action] == "show" %>
-        <% if place.pictures.count > 0 %>
-            <p>Pictures: </p>
-            
-            <div id="pictures">
-                <% place.pictures.each do |picture| %>
-                    <%= link_to(picture.image.url, target: "_blank") do %>
-                        <%= image_tag(picture.image) %>
-                    <% end %>
-                <% end %>
-            </div>
-        <% end %>
-    
-        <div id="map" data-latitude="<%= place.latitude %>" data-longitude="<%= place.longitude %>"></div>
+        <%= place.address %>
+    <% else %>
+        <%= link_to(place.address, place) %>
     <% end %>
-</div>
+</h1>
+
+<p class="description"><%= place.description %></p>
+
+<p>
+    Price: <span class="price"><%= place.price.to_s(:currency) %></span>, For: <spa class="for"><%= place.for.capitalize %></span>
+</p>
+
+<p>
+    Rooms: <span class="rooms"><%= place.rooms %></span>, Bathrooms: <span class="bathrooms"><%= place.bathrooms %></span>
+</p>

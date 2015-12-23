@@ -3,10 +3,10 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 html, body {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
 }
 
 body {
@@ -14,9 +14,9 @@ body {
 }
 
 .container {
-  box-sizing: inherit;
-  display: flex;
-  flex-direction: inherit;
+    box-sizing: inherit;
+    display: flex;
+    flex-direction: inherit;
 }
 
 #content {
@@ -25,33 +25,39 @@ body {
 }
 
 #options, #content {
-  flex-direction: column;
-  padding: 0 15px;
+    flex-direction: column;
+    padding: 0 15px;
 }
 
 #main {
-  height: 100%;
-  width: 100%;
+    height: 100%;
+    width: 100%;
+}
+
+.listing, #listing {
+    flex-direction: column;
+    
+    h1 {
+        margin-top: 0;
+    }
+    
+    p {
+        margin: 0 0 10px 0;
+    }
+    
+    p:last-child {
+        margin-bottom: 0;
+    }
+}
+
+#listing {
+    flex-grow: 1;
 }
 
 .listing {
-  margin-bottom: 10px;
-  flex-direction: column;
-  flex-grow: 1;
-  
-  h1 {
-      margin-top: 0;
-  }
-  
-  p {
-      margin: 0 0 10px 0;
-  }
-  
-  p:last-child {
-      margin-bottom: 0;
-  }
+    margin-bottom: 10px;
 }
 
 .listing:last-child {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }
