@@ -45,9 +45,7 @@ class PlacesController < ApplicationController
         @place.contact = @place.user.email 
         
         respond_to do |format|
-            if @place.save 
-                
-            @place.index!
+            if @place.save
                 format.html { redirect_to @place, notice: 'Place was successfully created.' }
                 
                 format.json { render :show, status: :created, location: @place }
@@ -64,8 +62,6 @@ class PlacesController < ApplicationController
     def update
         respond_to do |format|
             if @place.update(place_params)
-                
-            @place.index!
                 format.html { redirect_to @place, notice: 'Place was successfully updated.' }
                 
                 format.json { render :show, status: :created, location: @place }
@@ -80,8 +76,6 @@ class PlacesController < ApplicationController
     # DELETE /places/1
     # DELETE /places/1.json
     def destroy
-        @place.remove_from_index!
-        
         @place.destroy
         
         respond_to do |format|
@@ -99,10 +93,9 @@ class PlacesController < ApplicationController
     
     def authorize_user 
         if @place.user != current_user
-        
-        flash.alert = "You're not authorized to do that!"
-        
-        redirect_to root_path
+            flash.alert = "You're not authorized to do that!"
+            
+            redirect_to root_path
         end 
     end 
     
