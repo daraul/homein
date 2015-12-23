@@ -29,6 +29,10 @@ body {
     padding: 0 15px;
 }
 
+#login, #register, #confirmation, #password {
+    @extend #content;
+}
+
 #main {
     height: 100%;
     width: 100%;
