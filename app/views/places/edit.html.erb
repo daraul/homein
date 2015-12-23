@@ -1,7 +1,7 @@
-<div class="listing container">
+<div id="content" class="container">
     <%= render 'form' %>
     
-    <div id="map" data-latitude="<%= @place.latitude %>" data-longitude="<%= @place.longitude %>"></div>
+    <%= render 'map', place: @place, draggable_marker: true %>
 </div>
 
 <div id="options" class="container">

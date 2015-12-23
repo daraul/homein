@@ -12,4 +12,4 @@ $(document).on 'page:change', () ->
         marker = new google.maps.Marker 
             position: map.getCenter() 
             map: map 
-            draggable: false 
+            draggable: Boolean(mapContainer.dataset['markerDraggable'])

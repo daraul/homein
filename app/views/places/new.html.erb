@@ -1,7 +1,7 @@
-<div id="listing" class="container">
+<div id="content" class="container">
     <%= render 'form' %>
     
-    <div id="map"></div>
+    <%= render 'map', place: @place, draggable_marker: true %>
 </div>
 
 <div id="options" class="container">
