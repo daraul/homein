@@ -6,7 +6,7 @@
         <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
         <%= csrf_meta_tags %>
         
-        <script defer src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['google_maps_api_key'] %>"></script>
+        <script defer src="https://maps.googleapis.com/maps/api/js" ></script>
         
         <!-- Fontawesome -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
@@ -49,13 +49,5 @@
                 <% end %>
             </div> <!-- Close the options container -->
         </div>
-      
-        <script type="text/javascript" charset="utf-8">
-            $("#alert, #notice").bind("DOMSubtreeModified", function() {
-                setTimeout(function() {
-                    $("#alert, #notice").html("");
-                }, 2500);
-            });
-        </script>
     </body>
 </html>
