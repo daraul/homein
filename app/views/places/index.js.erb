@@ -1,4 +1,6 @@
-$('#listings.container').append('<%= j render @places %>');
+var content = '<%= j div_for(@places, :class => "listing container") { |place| render place } %>'
+
+$('#listings.container').append(content);
 
 <% if @places.next_page %>
     $('#infiniteScrolling').html('<%= j will_paginate @places %>');
