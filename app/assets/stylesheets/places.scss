@@ -2,6 +2,8 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+@import 'layout';
+
 html, body {
     height: 100%;
     width: 100%;
@@ -22,7 +24,7 @@ html, body {
 
 #options, #content {
     flex-direction: column;
-    padding: 0 15px;
+    padding: 15px;
 }
 
 #login, #register, #confirmation, #password {
@@ -30,9 +32,60 @@ html, body {
 }
 
 #main {
+    @include flex-direction();
     padding: 10px 0;
     height: 100%;
     width: 100%;
+}
+
+#facets {
+    height: 100%;
+    
+    form {
+        display: flex;
+        height: inherit;
+        flex-direction: column;
+        flex-wrap: wrap;
+        
+        .container {
+            width: 100%;
+            flex-direction: row;
+            margin-bottom: 10px;
+            justify-content: center;
+
+            #for_container {
+                width: auto;
+                margin-right: $form-input-margin
+            }
+        }
+        
+        .container:last-child {
+            margin-bottom: initial;
+        }
+        
+        #sliders {
+            flex-grow: 1;
+            @include flex-direction();
+            
+            .container {
+                @include flex-direction-inverse();
+                margin-bottom: initial;
+                align-items: center;
+                
+                input:first-of-type {
+                    @include input-min-margin();
+                }
+                
+                input:last-of-type {
+                    @include input-max-margin();
+                }
+                
+                .slider {
+                    @include slider-fill();
+                }
+            }
+        }
+    }
 }
 
 .listing, #listing {

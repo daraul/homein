@@ -34,14 +34,38 @@
     }
 }
 
-@mixin slider-margins() {
+@mixin slider-fill() {
     @media screen {
         @media (orientation: landscape) {
-            margin: 20px 0 ;
+            height: 100%;
         }
         
         @media (orientation: portrait) {
-            margin: 0 20px;
+            width: 100%;
+        }
+    }
+}
+
+@mixin input-min-margin() {
+    @media screen {
+        @media (orientation: landscape) {
+            margin-bottom: $form-input-margin;
+        }
+        
+        @media (orientation: portrait) {
+            margin-right: $form-input-margin;
+        }
+    }
+}
+
+@mixin input-max-margin() {
+    @media screen {
+        @media (orientation: landscape) {
+            margin-top: $form-input-margin;
+        }
+        
+        @media (orientation: portrait) {
+            margin-left: $form-input-margin;
         }
     }
 }
@@ -60,4 +84,4 @@
     }
 }
 
-$default_bottom_margin: 15px;
+$form-input-margin: 15px;

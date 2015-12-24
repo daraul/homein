@@ -8,7 +8,7 @@
             <%= render 'pictures', place: @place %>
         <% end %>
         
-        <% if @place.user = current_user %>
+        <% if @place.user == current_user %>
             <td><%= link_to 'Edit', edit_place_path(@place) %></td>
             
             <td><%= link_to 'Destroy', @place, method: :delete, data: { confirm: 'Are you sure?' } %></td>

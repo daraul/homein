@@ -1,33 +1,47 @@
 <div id="facets" class="container">
     <%= form_tag places_url, :method => 'get', :id => "places_filter" do %>
-        <%= label_tag :price %>
+        <div id="sliders" class="container">
+            <div class="container">
+                <%= label_tag :price %>
+                
+                <%= number_field_tag "price[min]", params.has_key?('price') ? params['price']['min'] : nil, :id => "min_price", :min => Place.minimum(:price), :max => Place.maximum(:price), :style => "width:#{Place.maximum(:price).to_s.length}em;" %>
+                
+                <div class="slider" id="price" data-min="<%= Place.minimum(:price) %>" data-max="<%= Place.maximum(:price) %>" data-low="<%= params.has_key?('price') && !params[:price][:min].blank? ? params['price']['min'] : Place.minimum(:price) %>" data-high="<%= params.has_key?('price') && !params[:price][:max].blank? ? params['price']['max'] : Place.maximum(:price) %>"></div>
+                
+                <%= number_field_tag "price[max]", params.has_key?('price') ? params['price']['max'] : nil, :id => "max_price", :min => Place.minimum(:price), :max => Place.maximum(:price), :style => "width:#{Place.maximum(:price).to_s.length}em;" %>
+            </div>
+            
+            <div class="container">
+                <%= label_tag :rooms %>
+                
+                <%= number_field_tag "rooms[min]", params.has_key?('rooms') ? params['rooms']['min'] : nil, :id => "min_rooms", :min => Place.minimum(:rooms), :max => Place.maximum(:rooms), :style => "width:#{Place.maximum(:rooms).to_s.length}em;" %>
+                
+                <div class="slider" id="rooms" data-min="<%= Place.minimum(:rooms) %>" data-max="<%= Place.maximum(:rooms) %>" data-low="<%= params.has_key?('rooms') && !params[:rooms][:min].blank? ? params['rooms']['min'] : Place.minimum(:rooms) %>" data-high="<%= params.has_key?('rooms') && !params[:rooms][:max].blank? ? params['rooms']['max'] : Place.maximum(:rooms) %>"></div>
+                
+                <%= number_field_tag "rooms[max]", params.has_key?('rooms') ? params['rooms']['max'] : nil, :id => "max_rooms", :min => Place.minimum(:rooms), :max => Place.maximum(:rooms), :style => "width:#{Place.maximum(:rooms).to_s.length}em;" %>
+            </div>
+            
+            <div class="container">
+                <%= label_tag :bathrooms %>
+                
+                <%= number_field_tag "bathrooms[min]", params.has_key?('bathrooms') ? params['bathrooms']['min'] : nil, :id => "min_bathrooms", :min => Place.minimum(:bathrooms), :max => Place.maximum(:bathrooms), :style => "width:#{Place.maximum(:bathrooms).to_s.length}em;" %>
+                
+                <div class="slider" id="bathrooms" data-min="<%= Place.minimum(:bathrooms) %>" data-max="<%= Place.maximum(:bathrooms) %>" data-low="<%= params.has_key?('bathrooms') && !params[:bathrooms][:min].blank? ? params['bathrooms']['min'] : Place.minimum(:bathrooms) %>" data-high="<%= params.has_key?('bathrooms') && !params[:bathrooms][:max].blank? ? params['bathrooms']['max'] : Place.maximum(:bathrooms) %>"></div>
+                
+                <%= number_field_tag "bathrooms[max]", params.has_key?('bathrooms') ? params['bathrooms']['max'] : nil, :id => "max_bathrooms", :min => Place.minimum(:bathrooms), :max => Place.maximum(:bathrooms), :style => "width:#{Place.maximum(:bathrooms).to_s.length}em;" %>
+            </div>
+        </div>
         
-        <%= number_field_tag "price[min]", params.has_key?('price') ? params['price']['min'] : nil, :id => "min_price", :min => Place.minimum(:price), :max => Place.maximum(:price) %>
+        <div class="container">
+            <div id="for_container" class="container">
+                <%= label_tag :for, "For: " %>
+            
+                <%= select_tag "for", options_for_select(["Sale", "Rent"], params.has_key?('for') ? params['for'] : "" ), include_blank: "Both" %>
+            </div>
+            
+            <%= text_field_tag :query, params[:query], :placeholder => "Search..." %>
+        </div>
         
-        <div class="slider" id="price" data-min="<%= Place.minimum(:price) %>" data-max="<%= Place.maximum(:price) %>" data-low="<%= params.has_key?('price') && !params[:price][:min].blank? ? params['price']['min'] : Place.minimum(:price) %>" data-high="<%= params.has_key?('price') && !params[:price][:max].blank? ? params['price']['max'] : Place.maximum(:price) %>"></div>
-        
-        <%= number_field_tag "price[max]", params.has_key?('price') ? params['price']['max'] : nil, :id => "max_price", :min => Place.minimum(:price), :max => Place.maximum(:price) %>
-        
-        <%= label_tag :rooms %>
-        
-        <%= number_field_tag "rooms[min]", params.has_key?('rooms') ? params['rooms']['min'] : nil, :id => "min_rooms", :min => Place.minimum(:rooms), :max => Place.maximum(:rooms) %>
-        
-        <div class="slider" id="rooms" data-min="<%= Place.minimum(:rooms) %>" data-max="<%= Place.maximum(:rooms) %>" data-low="<%= params.has_key?('rooms') && !params[:rooms][:min].blank? ? params['rooms']['min'] : Place.minimum(:rooms) %>" data-high="<%= params.has_key?('rooms') && !params[:rooms][:max].blank? ? params['rooms']['max'] : Place.maximum(:rooms) %>"></div>
-        
-        <%= number_field_tag "rooms[max]", params.has_key?('rooms') ? params['rooms']['max'] : nil, :id => "max_rooms", :min => Place.minimum(:rooms), :max => Place.maximum(:rooms) %>
-        
-        <%= label_tag :bathrooms %>
-        
-        <%= number_field_tag "bathrooms[min]", params.has_key?('bathrooms') ? params['bathrooms']['min'] : nil, :id => "min_bathrooms", :min => Place.minimum(:bathrooms), :max => Place.maximum(:bathrooms) %>
-        
-        <div class="slider" id="bathrooms" data-min="<%= Place.minimum(:bathrooms) %>" data-max="<%= Place.maximum(:bathrooms) %>" data-low="<%= params.has_key?('bathrooms') && !params[:bathrooms][:min].blank? ? params['bathrooms']['min'] : Place.minimum(:bathrooms) %>" data-high="<%= params.has_key?('bathrooms') && !params[:bathrooms][:max].blank? ? params['bathrooms']['max'] : Place.maximum(:bathrooms) %>"></div>
-        
-        <%= number_field_tag "bathrooms[max]", params.has_key?('bathrooms') ? params['bathrooms']['max'] : nil, :id => "max_bathrooms", :min => Place.minimum(:bathrooms), :max => Place.maximum(:bathrooms) %>
-        
-        <%= select_tag "for", options_for_select(["Sale", "Rent"], params.has_key?('for') ? params['for'] : "" ), include_blank: "Both" %>
-        
-        <%= text_field_tag :query, params[:query] %>
-        
-        <%= submit_tag "Search" %>
+        <%= submit_tag "Submit" %>
     <% end %>
 </div>
