@@ -45,10 +45,6 @@
       <%= f.label :for %><br>
       <%= f.select :for, [["Rent", "Rent"], ["Sale", "Sale"]] %>
   </div>
-  <div class="field" id="contact_field">
-    <%= f.label :contact %><br>
-    <%= f.text_field :contact %>
-  </div>
   <%= f.fields_for(:pictures, Picture.new) do |ff| %>
       <div class="field">
           <%= ff.label :image %>

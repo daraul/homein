@@ -32,10 +32,9 @@ ActiveRecord::Schema.define(version: 20150806000320) do
     t.integer  "bathrooms"
     t.string   "for"
     t.integer  "price"
-    t.string   "contact"
+    t.integer  "user_id"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
-    t.integer  "user_id"
   end
 
   add_index "places", ["user_id"], name: "index_places_on_user_id"

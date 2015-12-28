@@ -44,7 +44,7 @@ Rails.application.configure do
         :storage => :imgur
     }
     
-    config.action_mailer.default_url_options = { :host => ENV['rails_development_host'] }
+    config.action_mailer.default_url_options = { :host => ENV['rails_host'] }
     config.action_mailer.delivery_method = :smtp
     config.action_mailer.smtp_settings = {:address => "0.0.0.0", :port => 1025}
 end

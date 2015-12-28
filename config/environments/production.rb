@@ -85,7 +85,7 @@ Rails.application.configure do
     # Disable delivery errors, bad email addresses will be ignored
     config.action_mailer.raise_delivery_errors = true
     config.action_mailer.delivery_method = :smtp
-    config.action_mailer.default_url_options = { :host => ENV['production_host'] }
+    config.action_mailer.default_url_options = { :host => ENV['rails_host'] }
     ActionMailer::Base.smtp_settings = {
       :address    => "smtp.sendgrid.net",
       :port       => 25,

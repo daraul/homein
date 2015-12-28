@@ -9,7 +9,7 @@ class CreatePlaces < ActiveRecord::Migration
       t.integer :bathrooms
       t.string  :for 
       t.integer :price
-      t.string  :contact
+      t.belongs_to :user, index: true 
 
       t.timestamps null: false
     end

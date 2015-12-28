@@ -15,3 +15,5 @@
 <p>
     Rooms: <span class="rooms"><%= place.rooms %></span>, Bathrooms: <span class="bathrooms"><%= place.bathrooms %></span>
 </p>
+
+<p><%= mail_to(place.user.email) %></p>
