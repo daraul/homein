@@ -4,6 +4,9 @@ class Place < ActiveRecord::Base
 	
 	accepts_nested_attributes_for :pictures, :allow_destroy => true
 	
+	validates :price, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+	validates :rooms, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+	validates :bathrooms, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 	validates_presence_of :price, :rooms, :bathrooms, :description, :for, :address, message: "All fields are required, but pictures aren't." 
 	validates_length_of :pictures, maximum: 3, message: "3 or less pictures, please!"
 	
