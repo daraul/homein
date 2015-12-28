@@ -53,6 +53,9 @@ gem 'rename'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+# Add coveralls
+gem 'coveralls', require: false
+
 group :production do 
 	gem 'pg'
 
