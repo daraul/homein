@@ -8,6 +8,39 @@ String.prototype.capitalizeFirstLetter = () ->
     this.charAt(0).toUpperCase() + this.slice(1)
 
 $(document).on 'page:change', () ->
+    $.xhrPool = []
+
+    $.xhrPool.abortAll = ->
+        $(this).each (idx, jqXHR) ->
+            jqXHR.abort()
+        $.xhrPool.length = 0
+    
+    $.ajaxSetup
+        beforeSend: (jqXHR) ->
+            $.xhrPool.abortAll()
+            
+            $.xhrPool.push jqXHR
+        complete: (jqXHR) ->
+            index = $.xhrPool.indexOf(jqXHR)
+            
+            if index > -1
+                $.xhrPool.splice index, 1
+                
+    $("#places_filter").submit () ->
+        $.ajax({
+            url: $("#places_filter").attr("action")
+            data: $("#places_filter").serialize()
+            dataType: "script"
+            beforeSend: (jqXHR) ->
+                $.xhrPool.abortAll()
+            
+                $.xhrPool.push jqXHR
+                
+                $('#listings.container, #infiniteScrolling').html("")
+        })
+        
+        return false
+    
     getFacetSliderOrientation = () ->
         if window.innerWidth > window.innerHeight 
             return "vertical"
@@ -27,6 +60,9 @@ $(document).on 'page:change', () ->
             facet = $(this).attr('id')
             $("#min_" + facet).val(ui.values[0])
             $("#max_" + facet).val(ui.values[1])
+            
+        stop: (event, ui) ->
+            $('#places_filter').submit()
     
     window.addEventListener 'resize', ->
         $(".slider").slider("option", "orientation", getFacetSliderOrientation())
