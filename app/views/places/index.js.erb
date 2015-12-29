@@ -1,5 +1,7 @@
 var content = '<%= j div_for(@places, :class => "listing container") { |place| render place } %>'
 
+console.log(content);
+
 $('#listings.container').append(content);
 
 <% if @places.next_page %>

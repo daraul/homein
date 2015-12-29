@@ -17,3 +17,17 @@
 </p>
 
 <p><%= mail_to(place.user.email) %></p>
+
+<% if defined?(map) && map == true %>
+    <%= render 'map', place: place %>
+<% end %>
+
+<% if place.pictures.count > 0 %>
+    <%= render 'pictures', place: place %>
+<% end %>
+
+<% if place.user == current_user %>
+    <%= link_to 'Edit', edit_place_path(place) %>
+    
+    <%= link_to 'Destroy', place, method: :delete, data: { confirm: 'Are you sure?' } %>
+<% end %>

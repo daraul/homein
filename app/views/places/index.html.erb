@@ -2,12 +2,6 @@
     <div id="listings" class="container">
         <%= div_for(@places, :class => "listing container") do |place| %>
             <%= render place %>
-            
-            <% if place.user == current_user %>
-                <td><%= link_to 'Edit', edit_place_path(place) %></td>
-                
-                <td><%= link_to 'Destroy', place, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-            <% end %>
         <% end %>
     </div>
     
